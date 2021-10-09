@@ -7,14 +7,14 @@ const schema = new Schema({
         required: true,
         ref: 'User'
     },
-    tickId: {
+    coupId: {
         type: String,
         required: true,
-        ref: 'Tick'
+        ref: 'Coup'
     },
     status: Boolean
 });
 
-const Ticket = mongoose.model('Ticket', schema, 'ticket');
+const Coupon = mongoose.model('Coupon', schema, 'coupon');
 
-module.exports = Ticket
+module.exports = Coupon
