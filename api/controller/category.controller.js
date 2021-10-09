@@ -1,12 +1,12 @@
-const Auth = require('../model/auth.model')
+const Category = require('../model/category.model')
 
 const express = require('express')
 
 const router = express.Router()
 
-// GET auth all
+// GET category all
 router.get('/', async (req, res) => {
-    res.json('list auth')
+    res.json('list category')
 })
 
 module.exports = router

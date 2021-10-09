@@ -8,7 +8,8 @@ const schema = new Schema({
     },
     roomId: {
         type: String,
-        required: true
+        required: true,
+        ref: 'Room'
     },
     message: String
 });

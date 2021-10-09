@@ -1,12 +1,12 @@
-const Auth = require('../model/auth.model')
+const Client = require('../model/client.model')
 
 const express = require('express')
 
 const router = express.Router()
 
-// GET auth all
+// GET client all
 router.get('/', async (req, res) => {
-    res.json('list auth')
+    res.json('list client')
 })
 
 module.exports = router
