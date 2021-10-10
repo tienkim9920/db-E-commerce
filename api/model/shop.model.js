@@ -8,12 +8,9 @@ const schema = new Schema({
         ref: 'User'
     },
     name: String,
-    address: String,
     description: String,
     reply: Number,
     replyTime: String,
-    lat: String,
-    lng: String,
     createTime: String
 });
 
