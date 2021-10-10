@@ -7,18 +7,36 @@ const Auth = require('../model/auth.model')
 // GET auth all
 router.get('/', async (req, res) => {
     
-    // const auth = await Auth.find({})
+    const auth = await Auth.find({})
 
-    res.json("Thanh Cong")
+    res.json(auth)
 
 })
 
+// POST auth
 router.post('/', async (req, res) => {
 
-    // await Auth.create(req.body)
+    const auth = await Auth.create(req.body)
 
-    // res.json("Thanh Cong")
+    res.json({
+        msg: "Thanh Cong",
+        auth
+    })
 
+})
+
+// DELETE auth
+router.delete('/:id', async (req, res) => {
+    
+    const id = req.params.id
+
+    const auth = await Auth.deleteOne({ _id: id })
+
+    res.json({
+        msg: "Thanh Cong",
+        auth
+    })
+    
 })
 
 module.exports = router
