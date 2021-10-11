@@ -30,7 +30,7 @@ router.delete('/:id', async (req, res) => {
     
     const id = req.params.id
 
-    const auth = await Auth.deleteOne({ _id: id })
+    const mess = await Message.deleteOne({ _id: id })
 
     res.json({
         msg: "Thanh Cong",
