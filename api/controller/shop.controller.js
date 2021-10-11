@@ -5,8 +5,8 @@ const router = express.Router()
 const Shop = require('../model/shop.model')
 
 // GET shop all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const shop = await Shop.find({}).populate('userId')
 
     res.json(shop)
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 })
 
 // POST shop
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
 
     const shop = await Shop.create(req.body)
 
@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE shop
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     const shop = await Shop.deleteOne({ _id: id })
@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res) => {
         msg: "Thanh Cong",
         shop
     })
-    
+
 })
 
 module.exports = router

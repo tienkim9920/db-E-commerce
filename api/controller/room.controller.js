@@ -5,8 +5,8 @@ const router = express.Router()
 const Room = require('../model/room.model')
 
 // GET room all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const room = await Room.find({}).populate('clientId').populate('shopId')
 
     res.json(room)
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 })
 
 // POST room
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
 
     const room = await Room.create(req.body)
 
@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE room
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     const room = await Room.deleteOne({ _id: id })
@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res) => {
         msg: "Thanh Cong",
         room
     })
-    
+
 })
 
 module.exports = router
