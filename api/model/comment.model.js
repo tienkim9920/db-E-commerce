@@ -12,6 +12,7 @@ const schema = new Schema({
         required: true,
         ref: 'User'
     },
+    star: Number,
     content: String,
     createTime: String
 });

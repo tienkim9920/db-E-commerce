@@ -20,6 +20,7 @@ const schema = new Schema({
         type: Number,
         require: true
     },
+    image: Array,
     discount: Number,
     like: Number,
     comment: Number,

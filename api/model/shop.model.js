@@ -8,6 +8,7 @@ const schema = new Schema({
         ref: 'User'
     },
     name: String,
+    image: String,
     description: String,
     reply: Number,
     replyTime: String,
