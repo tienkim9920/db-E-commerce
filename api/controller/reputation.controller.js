@@ -2,20 +2,20 @@ const express = require('express')
 
 const router = express.Router()
 
-const Detail = require('../model/detail.model')
+const Reputation = require('../model/reputation.model')
 
-// GET detail all
+// GET reputation all
 router.get('/', async(req, res) => {
 
-    const detail = await Detail.find({})
+    const reputation = await Reputation.find({})
 
-    res.json(detail)
+    res.json(reputation)
 
 })
 
-// POST detail
+// POST reputation
 router.post('/', async(req, res) => {
-    Detail.create(req.body, function(err, result) {
+    Reputation.create(req.body, function(err, result) {
         if (err) {
             res.json({
                 msg: "That bai",
@@ -30,12 +30,12 @@ router.post('/', async(req, res) => {
     });
 })
 
-// DELETE detail
+// DELETE reputation
 router.delete('/:id', async(req, res) => {
 
     const id = req.params.id
 
-    Detail.deleteOne({ _id: id }, function(err, result) {
+    Reputation.deleteOne({ _id: id }, function(err, result) {
         if (err) {
             res.json({
                 msg: "That bai",
