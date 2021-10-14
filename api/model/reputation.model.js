@@ -6,7 +6,7 @@ const schema = new Schema({
         type: String,
         required: true,
         ref: 'Shop'
-    },    
+    },
     userId: {
         type: String,
         required: true,

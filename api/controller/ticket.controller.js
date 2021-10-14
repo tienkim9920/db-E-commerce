@@ -13,6 +13,15 @@ router.get('/', async(req, res) => {
 
 })
 
+// GET Ticket User
+router.get('/:userId', async(req, res) => {
+
+    const ticket = await Ticket.find({ userId: req.params.userId });
+
+    res.json(ticket)
+
+})
+
 // POST ticket
 router.post('/', async(req, res) => {
     Ticket.create(req.body, function(err, result) {

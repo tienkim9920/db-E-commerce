@@ -5,8 +5,8 @@ const router = express.Router()
 const Tick = require('../model/tick.model')
 
 // GET tick all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const tick = await Tick.find({})
 
     res.json(tick)
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 })
 
 // POST tick
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
 
     const tick = await Tick.create(req.body)
 
@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE tick
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     const tick = await Tick.deleteOne({ _id: id })
@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res) => {
         msg: "Thanh Cong",
         tick
     })
-    
+
 })
 
 module.exports = router
