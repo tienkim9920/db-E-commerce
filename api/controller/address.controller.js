@@ -5,8 +5,8 @@ const router = express.Router()
 const Address = require('../model/address.model')
 
 // GET address all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const address = await Address.find({}).populate('shopId')
 
     res.json(address)
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 })
 
 // POST address
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
 
     const address = await Address.create(req.body)
 
@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE address
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     const address = await Address.deleteOne({ _id: id })
@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res) => {
         msg: "Thanh Cong",
         address
     })
-    
+
 })
 
 module.exports = router

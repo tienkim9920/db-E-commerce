@@ -5,26 +5,35 @@ const router = express.Router()
 const Comment = require('../model/comment.model')
 
 // GET Comment all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const comment = await Comment.find({});
-    
+
+    res.json(comment)
+
+})
+
+// GET Comment Product
+router.get('/:productId', async(req, res) => {
+
+    const comment = await Comment.find({ productId: req.params.productId });
+
     res.json(comment)
 
 })
 
 // POST Comment
-router.post('/', async (req, res) => {
-    
-    Comment.create(req.body, function(err, result){
-        if(err) {
+router.post('/', async(req, res) => {
+
+    Comment.create(req.body, function(err, result) {
+        if (err) {
             res.json({
-                msg:"0",
+                msg: "0",
                 err
             })
-        }else{
+        } else {
             res.json({
-                msg:"1",
+                msg: "1",
                 result
             })
         }
@@ -33,8 +42,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE Comment
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     Comment.deleteOne({ _id: id }, function(err, result) {
