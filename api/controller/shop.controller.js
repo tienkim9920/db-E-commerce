@@ -7,9 +7,39 @@ const Shop = require('../model/shop.model')
 // GET shop all
 router.get('/', async(req, res) => {
 
-    const shop = await Shop.find({}).populate('userId')
+    const shop = 
+    await Shop.find({}).populate('userId')
 
     res.json(shop)
+
+})
+
+// GET detail shop by ID :TN
+
+// router.get('/:id', async (req, res) => {
+    
+//     const id = req.params.id
+
+//     const shop = await Shop.find({_id: id});
+    
+//     res.json(shop)({
+//         msg: "Get shop by id success",
+//         shop
+//     })
+
+// })
+
+// GET detail shop by ID :TN
+router.get('/:id', async (req, res) => {
+    
+    const id = req.params.id
+
+    const shop = await Shop.find({_id: id});
+    
+    res.json(shop)({
+        msg: "Get detail by userID success",
+        shop
+    })
 
 })
 

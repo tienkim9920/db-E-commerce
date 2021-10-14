@@ -1,3 +1,4 @@
+const { query } = require('express');
 const express = require('express')
 
 const router = express.Router()
@@ -10,6 +11,47 @@ router.get('/', async(req, res) => {
     const product = await Product.find({});
 
     res.json(product)
+
+})
+
+// Get detail product by ID 
+router.get('/:id', async (req, res) => {
+    
+    const id = req.params.id
+
+    const product = await Product.find({_id: id});
+    
+    res.json(product)({
+        msg: "Get product by category success",
+        product
+    })
+
+})
+
+// GET List product sale , on-sale
+router.get('/product', async (req, res) => {
+    
+    const discount = req.query.discount
+    const count = req.query.count
+
+    const productSale = await Product.find({discount: discount});
+    const productOnSale = await Product.find({count: count});
+    const productOutSale = await Product.find({count: count});
+    
+    res.json(productOnSale)({
+        msg: "Get list product on sale",
+        productOnSale
+    })
+    
+    res.json(productSale)({
+        msg: "Get list product sale",
+        productSale
+    })
+
+    res.json(productOutSale)({
+        msg: "Get list product out of stock",
+        productOutSale
+    })
 
 })
 
