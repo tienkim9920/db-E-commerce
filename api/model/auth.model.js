@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const schema = new Schema({
-  auth: String
+    auth: String
 });
 
 const Auth = mongoose.model('Auth', schema, 'auth');

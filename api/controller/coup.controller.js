@@ -5,26 +5,26 @@ const router = express.Router()
 const Coup = require('../model/coup.model')
 
 // GET Coup all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const coup = await Coup.find({});
-    
+
     res.json(coup)
 
 })
 
 // POST Coup
-router.post('/', async (req, res) => {
-    
-    Coup.create(req.body, function(err, result){
-        if(err) {
+router.post('/', async(req, res) => {
+
+    Coup.create(req.body, function(err, result) {
+        if (err) {
             res.json({
-                msg:"0",
+                msg: "0",
                 err
             })
-        }else{
+        } else {
             res.json({
-                msg:"1",
+                msg: "1",
                 result
             })
         }
@@ -33,8 +33,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE Coup
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     Coup.deleteOne({ _id: id }, function(err, result) {

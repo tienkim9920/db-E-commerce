@@ -5,7 +5,7 @@ const router = express.Router()
 const Reputation = require('../model/reputation.model')
 
 // GET reputation all
-router.get('/', async (req, res) => {
+router.get('/', async(req, res) => {
 
     const reputation = await Reputation.find({})
 
