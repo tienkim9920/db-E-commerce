@@ -14,12 +14,12 @@ router.get('/', async (req, res) => {
 
 })
 
-// Get detail product by categoryId 
-router.get('/product', async (req, res) => {
+// Get detail product by ID 
+router.get('/:id', async (req, res) => {
     
-    const categoryId = req.query.categoryId
-    
-    const product = await Product.find({categoryId: categoryId});
+    const id = req.params.id
+
+    const product = await Product.find({_id: id});
     
     res.json(product)({
         msg: "Get product by category success",
@@ -28,20 +28,32 @@ router.get('/product', async (req, res) => {
 
 })
 
-// GET List product 
-// router.get('/product', async (req, res) => {
+// GET List product sale , on-sale
+router.get('/product', async (req, res) => {
     
-//     const discount = req.query.discount
+    const discount = req.query.discount
+    const count = req.query.count
 
-
-//     const product = await Product.find({discount: discount});
+    const productSale = await Product.find({discount: discount});
+    const productOnSale = await Product.find({count: count});
+    const productOutSale = await Product.find({count: count});
     
-//     res.json(product)({
-//         msg: "Get product by discound success",
-//         product
-//     })
+    res.json(productOnSale)({
+        msg: "Get list product on sale",
+        productOnSale
+    })
+    
+    res.json(productSale)({
+        msg: "Get list product sale",
+        productSale
+    })
 
-// })
+    res.json(productOutSale)({
+        msg: "Get list product out of stock",
+        productOutSale
+    })
+
+})
 
 // POST Product
 router.post('/', async (req, res) => {

@@ -19,9 +19,6 @@ router.get('/', async (req, res) => {
 router.get('/order', async (req, res) => {
     
     const status = req.query.status
-    // const categoryId1 = req.params.categoryId
-    // console.log(categoryId);
-    // console.log(categoryId1);
 
     const order = await Order.find({status: status});
     
