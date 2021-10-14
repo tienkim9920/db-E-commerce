@@ -34,21 +34,34 @@ router.post('/', async(req, res) => {
 
 // Update Product
 router.patch('/:id', async(req, res) => {
+
     const id = req.params.id;
+
     Product.updateOne({ _id: id }, req.body, function(err, result) {
         if (err) {
-            return res.json({ msg: 'That bai', err: err });
+            return res.json({ 
+                msg: 'That bai', 
+                err: err 
+            });
         }
-        return res.json({ msg: 'Thanh cong', product: result });
+        return res.json({ 
+            msg: 'Thanh cong', 
+            product: result 
+        });
     })
 })
 
 // Update Product like
 router.patch('/like/:id', async(req, res) => {
+
     const id = req.params.id;
+
     let product = await Product.findOne({ _id: id })
+
     product.like = Number(product.like) + 1;
+
     product.save()
+
     res.json("Thanh Cong")
 })
 

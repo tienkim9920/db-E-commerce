@@ -33,6 +33,7 @@ router.post('/', async(req, res) => {
 })
 
 router.post('/login', async(req, res) => {
+
     const email = req.body.email
     const password = req.body.password
 
@@ -41,16 +42,23 @@ router.post('/login', async(req, res) => {
     if (user === null) {
         res.json({ msg: "Không Tìm Thấy User" })
     } else {
+
         const auth = await bcrypt.compare(password, user.password)
+
         if (auth) {
             var token = jwt.sign({ user: user }, 'shhhhh');
 
             var decoded = jwt.verify(token, 'shhhhh');
             console.log(decoded.user)
 
-            res.json({ msg: "Đăng nhập thành công", jwt: token })
+            res.json({ 
+                msg: "Đăng nhập thành công", 
+                jwt: token 
+            })
         } else {
-            res.json({ msg: "Sai mật khẩu" })
+            res.json({ 
+                msg: "Sai mật khẩu"
+            })
         }
     }
 })

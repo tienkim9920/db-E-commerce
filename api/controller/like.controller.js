@@ -18,7 +18,6 @@ router.post('/', async(req, res) => {
 
     const like = await Like.create(req.body)
 
-
     res.json({
         msg: "Thanh Cong",
         like
