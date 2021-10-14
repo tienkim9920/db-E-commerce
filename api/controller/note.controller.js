@@ -5,8 +5,8 @@ const router = express.Router()
 const Note = require('../model/note.model')
 
 // GET note all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const note = await Note.find({}).populate('distanceId')
 
     res.json(note)
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
 })
 
 // POST note
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
 
     const note = await Note.create(req.body)
 
@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE note
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     const note = await Note.deleteOne({ _id: id })
@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res) => {
         msg: "Thanh Cong",
         note
     })
-    
+
 })
 
 module.exports = router
