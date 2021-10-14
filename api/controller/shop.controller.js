@@ -13,6 +13,35 @@ router.get('/', async (req, res) => {
 
 })
 
+// GET detail shop by ID :TN
+
+// router.get('/:id', async (req, res) => {
+    
+//     const id = req.params.id
+
+//     const shop = await Shop.find({_id: id});
+    
+//     res.json(shop)({
+//         msg: "Get shop by id success",
+//         shop
+//     })
+
+// })
+
+// GET detail shop by userID :TN
+router.get('/shop', async (req, res) => {
+    
+    const userId = req.query.userId
+
+    const shop = await Shop.find({userId: userId});
+    
+    res.json(shop)({
+        msg: "Get detail by userID success",
+        shop
+    })
+
+})
+
 // POST shop
 router.post('/', async (req, res) => {
 

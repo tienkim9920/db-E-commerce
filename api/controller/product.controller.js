@@ -1,3 +1,4 @@
+const { query } = require('express');
 const express = require('express')
 
 const router = express.Router()
@@ -12,6 +13,35 @@ router.get('/', async (req, res) => {
     res.json(product)
 
 })
+
+// Get detail product by categoryId 
+router.get('/product', async (req, res) => {
+    
+    const categoryId = req.query.categoryId
+    
+    const product = await Product.find({categoryId: categoryId});
+    
+    res.json(product)({
+        msg: "Get product by category success",
+        product
+    })
+
+})
+
+// GET List product 
+// router.get('/product', async (req, res) => {
+    
+//     const discount = req.query.discount
+
+
+//     const product = await Product.find({discount: discount});
+    
+//     res.json(product)({
+//         msg: "Get product by discound success",
+//         product
+//     })
+
+// })
 
 // POST Product
 router.post('/', async (req, res) => {
