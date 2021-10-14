@@ -7,7 +7,8 @@ const Coupon = require('../model/coupon.model')
 // GET coupon all
 router.get('/', async (req, res) => {
     
-    const coupon = await Coupon.find({}).populate('userId').populate('coupId')
+    // const coupon = await Coupon.find({}).populate('userId').populate('coupId')
+    const coupon = await Coupon.find({})
 
     res.json(coupon)
 
@@ -37,6 +38,18 @@ router.delete('/:id', async (req, res) => {
         coupon
     })
     
+})
+
+// Checking Coupon by GET Detail coupon with field userId, coupId
+router.get('/checking', async (req, res) => {
+
+    const { userId, coupId } = req.query
+
+    // Duyệt theo điều kiện và return true false
+    const checking = await Coupon.exists({ userId, coupId }) ? 'Code 200' : 'Code 404'
+
+    res.json(checking)
+
 })
 
 module.exports = router
