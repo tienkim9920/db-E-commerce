@@ -13,6 +13,18 @@ router.get('/', async(req, res) => {
 
 })
 
+// GET Detail reputation 
+router.get('/detail', async(req, res) => {
+    const { userId, shopId } = req.query || ""
+
+    const reputation = await Reputation.find({
+        $or: [{ userId: userId }, { shopId: shopId }]
+    })
+
+    res.json(reputation)
+
+})
+
 // POST reputation
 router.post('/', async(req, res) => {
     Reputation.create(req.body, function(err, result) {

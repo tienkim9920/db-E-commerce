@@ -16,12 +16,12 @@ router.get('/', async(req, res) => {
 
 // Get Order by status
 
-router.get('/order', async (req, res) => {
-    
+router.get('/order', async(req, res) => {
+
     const status = req.query.status
 
-    const order = await Order.find({status: status});
-    
+    const order = await Order.find({ status: status });
+
     res.json(order)({
         msg: "Get order by status success",
         order

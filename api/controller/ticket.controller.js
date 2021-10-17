@@ -39,6 +39,28 @@ router.post('/', async(req, res) => {
     });
 })
 
+// Update ticket
+router.patch('/:id', async(req, res) => {
+
+    const id = req.params.id
+
+    Ticket.updateOne({ _id: id }, { status: true }, function(err, result) {
+        if (err) {
+            res.json({
+                msg: "That bai",
+                err
+            })
+        } else {
+            res.json({
+                msg: "Thanh Cong",
+                result
+            })
+        }
+    })
+
+})
+
+
 // DELETE ticket
 router.delete('/:id', async(req, res) => {
 
