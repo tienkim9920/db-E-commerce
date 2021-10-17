@@ -19,12 +19,12 @@ router.post('/', async(req, res) => {
     Message.create(req.body, function(err, result) {
         if (err) {
             res.json({
-                msg: "0",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "1",
+                msg: "Code 200",
                 result
             })
         }
@@ -40,16 +40,27 @@ router.delete('/:id', async(req, res) => {
     Message.deleteOne({ _id: id }, function(err, result) {
         if (err) {
             res.json({
-                msg: "That bai",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "Thanh Cong",
+                msg: "Code 200",
                 result
             })
         }
     })
+
+})
+
+// GET List Message by roomId
+router.get('/list/roomId/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const messages = await Message.find({ roomId: id })
+
+    res.json(messages)
 
 })
 

@@ -28,6 +28,7 @@ app.use(bodyParser.json());
 
 // Import controller API
 const auth = require('./api/controller/auth.controller')
+const notification = require('./api/controller/notification.controller')
 const address = require('./api/controller/address.controller')
 const category = require('./api/controller/category.controller')
 const checking = require('./api/controller/checking.controller')
@@ -53,6 +54,7 @@ const ticket = require('./api/controller/ticket.controller')
 const user = require('./api/controller/user.controller')
 
 app.use('/auth', auth)
+app.use('/notification', notification)
 app.use('/address', address)
 app.use('/category', category)
 app.use('/checking', checking)

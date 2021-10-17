@@ -15,12 +15,12 @@ router.get('/', async(req, res) => {
 })
 
 // Get detail product by ID 
-router.get('/:id', async (req, res) => {
-    
+router.get('/:id', async(req, res) => {
+
     const id = req.params.id
 
-    const product = await Product.find({_id: id});
-    
+    const product = await Product.find({ _id: id });
+
     res.json(product)({
         msg: "Get product by category success",
         product
@@ -91,14 +91,14 @@ router.patch('/:id', async(req, res) => {
 
     Product.updateOne({ _id: id }, req.body, function(err, result) {
         if (err) {
-            return res.json({ 
-                msg: 'That bai', 
-                err: err 
+            return res.json({
+                msg: 'That bai',
+                err: err
             });
         }
-        return res.json({ 
-            msg: 'Thanh cong', 
-            product: result 
+        return res.json({
+            msg: 'Thanh cong',
+            product: result
         });
     })
 })
@@ -119,12 +119,16 @@ router.patch('/like/:id', async(req, res) => {
 
 // Update Product dislike
 router.patch('/dislike/:id', async(req, res) => {
-    const id = req.params.id;
-    let product = await Product.findOne({ _id: id })
-    product.like = Number(product.like) - 1;
-    product.save()
-    res.json("Thanh Cong")
 
+    const id = req.params.id;
+
+    let product = await Product.findOne({ _id: id })
+
+    product.like = Number(product.like) - 1;
+
+    product.save()
+
+    res.json("Thanh Cong")
 })
 
 // DELETE Product
@@ -146,6 +150,18 @@ router.get('/discount', async(req, res) => {
 
     // Lọc theo điều kiện lớn hơn 1
     const products = await Product.where('expiredTime').gte(1).limit(9)
+
+    res.json(products)
+
+})
+
+//GET All Shop Product Pagination
+router.get('/shop/pagination', async(req, res) => {
+
+    const { page, shopId } = req.query
+
+    // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
+    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 8).limit(8)
 
     res.json(products)
 

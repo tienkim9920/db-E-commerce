@@ -20,8 +20,29 @@ router.post('/', async(req, res) => {
     const coupon = await Coupon.create(req.body)
 
     res.json({
-        msg: "Thanh Cong",
+        msg: "Code 200",
         coupon
+    })
+
+})
+
+// Update ticket
+router.patch('/:id', async(req, res) => {
+
+    const id = req.params.id
+
+    Coupon.updateOne({ _id: id }, { status: true }, function(err, result) {
+        if (err) {
+            res.json({
+                msg: "That bai",
+                err
+            })
+        } else {
+            res.json({
+                msg: "Thanh Cong",
+                result
+            })
+        }
     })
 
 })
@@ -34,7 +55,7 @@ router.delete('/:id', async(req, res) => {
     const coupon = await Coupon.deleteOne({ _id: id })
 
     res.json({
-        msg: "Thanh Cong",
+        msg: "Code 200",
         coupon
     })
 
@@ -46,9 +67,20 @@ router.get('/checking', async(req, res) => {
     const { userId, coupId } = req.query
 
     // Duyệt theo điều kiện và return true false
-    const checking = await Coupon.exists({ userId, coupId }) ? 'Code 200' : 'Code 404'
+    const checking = await Coupon.exists({ userId, coupId, status: true }) ? 'Status True' : 'Status False'
 
     res.json(checking)
+
+})
+
+// GET List Coupon Status by userId
+router.get('/list/userId', async(req, res) => {
+
+    const { status, userId } = req.query
+
+    const ticket = await Coupon.find({ userId, status })
+
+    res.json(ticket)
 
 })
 
