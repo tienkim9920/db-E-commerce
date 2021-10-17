@@ -26,7 +26,7 @@ router.post('/', async(req, res) => {
 
 })
 
-// Update ticket
+// Update Coupon
 router.patch('/:id', async(req, res) => {
 
     const id = req.params.id
@@ -78,9 +78,9 @@ router.get('/list/userId', async(req, res) => {
 
     const { status, userId } = req.query
 
-    const ticket = await Coupon.find({ userId, status })
+    const coupon = await Coupon.find({ userId, status })
 
-    res.json(ticket)
+    res.json(coupon)
 
 })
 
