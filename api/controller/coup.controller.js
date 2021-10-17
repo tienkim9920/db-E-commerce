@@ -19,12 +19,12 @@ router.post('/', async(req, res) => {
     Coup.create(req.body, function(err, result) {
         if (err) {
             res.json({
-                msg: "0",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "1",
+                msg: "Code 200",
                 result
             })
         }
@@ -40,17 +40,28 @@ router.delete('/:id', async(req, res) => {
     Coup.deleteOne({ _id: id }, function(err, result) {
         if (err) {
             res.json({
-                msg: "That bai",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "Thanh Cong",
+                msg: "Code 200",
                 result
             })
         }
     })
 
+})
+
+// Checking Discount Coup By Code
+router.get('/:code', async (req, res) => {
+
+    const { code } = req.params
+
+    const coup = await Coup.findOne({ code })
+
+    res.json(coup)
+    
 })
 
 

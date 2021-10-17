@@ -109,12 +109,16 @@ router.patch('/like/:id', async(req, res) => {
 
 // Update Product dislike
 router.patch('/dislike/:id', async(req, res) => {
-    const id = req.params.id;
-    let product = await Product.findOne({ _id: id })
-    product.like = Number(product.like) - 1;
-    product.save()
-    res.json("Thanh Cong")
 
+    const id = req.params.id;
+
+    let product = await Product.findOne({ _id: id })
+
+    product.like = Number(product.like) - 1;
+
+    product.save()
+    
+    res.json("Thanh Cong")
 })
 
 // DELETE Product

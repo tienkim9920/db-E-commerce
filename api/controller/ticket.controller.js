@@ -60,4 +60,27 @@ router.delete('/:id', async(req, res) => {
 
 })
 
+// Checking Ticket By userId, tickId
+router.get('/checking/used', async (req, res) => {
+
+    const { userId, tickId } = req.query
+
+    // Duyệt theo điều kiện và return true false
+    const checking = await Ticket.exists({ userId, tickId, status: true }) ? 'Status True' : 'Status False'
+
+    res.json(checking)
+
+})
+
+// GET List Ticket Status by userId
+router.get('/list/userId', async (req, res) => {
+
+    const { status, userId } = req.query
+
+    const ticket = await Ticket.find({ userId, status })
+
+    res.json(ticket)
+
+})
+
 module.exports = router

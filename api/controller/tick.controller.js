@@ -39,4 +39,15 @@ router.delete('/:id', async(req, res) => {
 
 })
 
+// GET detail Tick
+router.get('/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const tick = await Tick.findOne({ _id: id })
+
+    res.json(tick)
+
+})
+
 module.exports = router
