@@ -13,17 +13,26 @@ router.get('/', async(req, res) => {
 
 })
 
+// GET detail orderID
+router.get('/order', async(req, res) => {
+    const { orderId } = req.query
+    const detail = await Detail.find({ orderId: orderId }).populate('productId')
+
+    res.json(detail)
+
+})
+
 // POST detail
 router.post('/', async(req, res) => {
     Detail.create(req.body, function(err, result) {
         if (err) {
             res.json({
-                msg: "That bai",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "Thanh Cong",
+                msg: "Code 200",
                 result
             })
         }
@@ -38,12 +47,12 @@ router.delete('/:id', async(req, res) => {
     Detail.deleteOne({ _id: id }, function(err, result) {
         if (err) {
             res.json({
-                msg: "That bai",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "Thanh Cong",
+                msg: "Code 200",
                 result
             })
         }
