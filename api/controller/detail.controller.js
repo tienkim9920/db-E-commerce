@@ -13,6 +13,15 @@ router.get('/', async(req, res) => {
 
 })
 
+// GET detail orderID
+router.get('/order', async(req, res) => {
+    const { orderId } = req.query
+    const detail = await Detail.find({ orderId: orderId }).populate('productId')
+
+    res.json(detail)
+
+})
+
 // POST detail
 router.post('/', async(req, res) => {
     Detail.create(req.body, function(err, result) {
