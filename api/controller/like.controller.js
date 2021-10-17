@@ -19,7 +19,7 @@ router.post('/', async(req, res) => {
     const like = await Like.create(req.body)
 
     res.json({
-        msg: "Thanh Cong",
+        msg: "Code 200",
         like
     })
 
@@ -33,7 +33,7 @@ router.delete('/:id', async(req, res) => {
     const like = await Like.deleteOne({ _id: id })
 
     res.json({
-        msg: "Thanh Cong",
+        msg: "Code 200",
         like
     })
 

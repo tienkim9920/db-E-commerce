@@ -77,4 +77,35 @@ router.delete('/:id', async(req, res) => {
 
 })
 
+// PATCH update profile user
+router.patch('/update/:id', async (req, res) => {
+
+    const { id } = req.params;
+
+    const user = await User.findOne({ _id: id })
+
+    if (req.files.file){
+        var fileImage = req.files.file;
+
+        var fileName = fileImage.name
+    
+        // var fileProduct = "https://server-lover.herokuapp.com/" + fileName
+        var fileUser = "http://localhost:4000/" + fileName
+
+        user.image = fileUser
+
+        // move file name in folder public
+        fileImage.mv('./public/' + fileName)
+    }
+
+    user.name = req.body.name
+
+    user.save()
+
+    res.json({
+        msg: "Code 200"
+    })
+
+})
+
 module.exports = router
