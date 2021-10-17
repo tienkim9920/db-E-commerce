@@ -8,26 +8,11 @@ const Shop = require('../model/shop.model')
 router.get('/', async(req, res) => {
 
     const shop = 
-    await Shop.find({}).populate('userId')
+    await Shop.find({})
 
     res.json(shop)
 
 })
-
-// GET detail shop by ID :TN
-
-// router.get('/:id', async (req, res) => {
-    
-//     const id = req.params.id
-
-//     const shop = await Shop.find({_id: id});
-    
-//     res.json(shop)({
-//         msg: "Get shop by id success",
-//         shop
-//     })
-
-// })
 
 // GET detail shop by ID :TN
 router.get('/:id', async (req, res) => {
@@ -53,6 +38,28 @@ router.post('/', async(req, res) => {
         shop
     })
 
+})
+
+// Update info of shop :TN
+
+router.patch('/:id', async (req,res) =>{
+
+    try{
+
+        const _id = req.params.id
+
+        const shop = await Shop.findByIdAndUpdate(_id,req.body,{
+            new:true
+        });
+        
+        res.json(shop)({
+            msg: "Update info of shop success",
+            shop
+        })
+    
+    }catch(e){
+        res.status(400).send(e);
+    }
 })
 
 // DELETE shop

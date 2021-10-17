@@ -28,31 +28,41 @@ router.get('/:id', async (req, res) => {
 
 })
 
-// GET List product sale , on-sale
-router.get('/product', async (req, res) => {
+// GET List product out of stock
+router.get('/list/outsale', async (req, res) => {
     
-    const discount = req.query.discount
-    const count = req.query.count
-
-    const productSale = await Product.find({discount: discount});
-    const productOnSale = await Product.find({count: count});
-    const productOutSale = await Product.find({count: count});
+    // Lấy tất cả count of product = 1
+    const productOutSale = await Product.find({count: { $eq: 0 } });
     
-    res.json(productOnSale)({
-        msg: "Get list product on sale",
-        productOnSale
-    })
-    
-    res.json(productSale)({
-        msg: "Get list product sale",
-        productSale
-    })
-
     res.json(productOutSale)({
         msg: "Get list product out of stock",
         productOutSale
     })
 
+})
+
+// GET List product on-sale
+router.get('/list/onsale', async (req, res) => {
+    
+    // Lấy tất cả count of product lớn hơn 1
+    const productOnSale = await Product.find({count: { $gte:1 }});
+    
+    res.json(productOnSale)({
+        msg: "Get list product on sale",
+        productOnSale
+    })
+})
+
+// GET List product sale 
+router.get('/list/sale', async (req, res) => {
+    
+    // Lấy tất cả discount of product lớn hơn 1
+    const productSale = await Product.find({discount: { $gte:1 }});
+        
+    res.json(productSale)({
+        msg: "Get list product sale",
+        productSale
+    })
 })
 
 // POST Product

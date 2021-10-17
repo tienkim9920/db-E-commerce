@@ -3,6 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 const Order = require('../model/order.model')
+const { route } = require('./address.controller')
 
 // GET order all
 router.get('/', async(req, res) => {
@@ -29,7 +30,6 @@ router.get('/order', async (req, res) => {
 
 })
 
-
 // POST order
 router.post('/', async(req, res) => {
 
@@ -40,6 +40,28 @@ router.post('/', async(req, res) => {
         order
     })
 
+})
+
+// Update Status order
+
+router.patch('/:id', async (req,res) =>{
+
+    try{
+        const _id = req.params.id
+        const status = req.body.status
+
+        const order = await Order.findByIdAndUpdate(_id,{status: status},{
+            new:true
+        });
+        
+        res.json(order)({
+            msg: "Transfer status success",
+            order
+        })
+    
+    }catch(e){
+        res.status(400).send(e);
+    }
 })
 
 // DELETE order

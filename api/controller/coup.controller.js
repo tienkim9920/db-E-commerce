@@ -13,6 +13,20 @@ router.get('/', async(req, res) => {
 
 })
 
+// GET all coup of shop by shopId
+router.get('/coup', async (req, res) => {
+    
+    const shopId = req.query.shopId
+
+    const coup = await Coup.find({shopId: shopId});
+    
+    res.json(coup)({
+        msg: "Get coup by shopId success",
+        coup
+    })
+
+})
+
 // POST Coup
 router.post('/', async(req, res) => {
 
