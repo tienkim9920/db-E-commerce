@@ -14,15 +14,33 @@ router.get('/', async(req, res) => {
 
 })
 
+// GET LIST all coupon by userId
+router.get('/:userId', async (req, res) => {
+
+    const { userId } = req.params
+
+    const coupon = await Coupon.find({ userId })
+
+    res.json(coupon)
+
+})
+
 // POST coupon
 router.post('/', async(req, res) => {
 
-    const coupon = await Coupon.create(req.body)
-
-    res.json({
-        msg: "Code 200",
-        coupon
-    })
+    Coupon.create(req.body, function(err, result) {
+        if (err) {
+            res.json({
+                msg: "Code 404",
+                err
+            })
+        } else {
+            res.json({
+                msg: "Code 200",
+                result
+            })
+        }
+    });
 
 })
 
@@ -34,12 +52,12 @@ router.patch('/:id', async(req, res) => {
     Coupon.updateOne({ _id: id }, { status: true }, function(err, result) {
         if (err) {
             res.json({
-                msg: "That bai",
+                msg: "Code 404",
                 err
             })
         } else {
             res.json({
-                msg: "Thanh Cong",
+                msg: "Code 200",
                 result
             })
         }

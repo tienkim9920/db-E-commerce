@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const schema = new Schema({
-    kilometer: Number,
+    from: Number,
+    to: Number,
     price: Number
 });
 

@@ -16,6 +16,17 @@ router.get('/', async(req, res) => {
 
 })
 
+//GET user detail
+router.get('/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const user = await User.findOne({ _id: id })
+
+    res.json(user)
+
+})
+
 // POST user
 router.post('/', async(req, res) => {
 

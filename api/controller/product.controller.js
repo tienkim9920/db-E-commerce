@@ -39,7 +39,7 @@ router.get('/list/outsale', async (req, res) => {
         productOutSale
     })
 
-})git c
+})
 
 // GET List product on-sale
 router.get('/list/onsale', async (req, res) => {
