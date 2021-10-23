@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
 
     res.json({
         msg: "Thanh Cong",
-        room
+        result: room
     })
 
 })

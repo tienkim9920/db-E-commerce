@@ -8,8 +8,21 @@ const { route } = require('./address.controller')
 // GET order all
 router.get('/', async(req, res) => {
 
-    const order = await Order.find({}).populate('userId').populate('payId')
-        .populate('noteId').populate('shopId')
+    // const order = await Order.find({}).populate('userId').populate('payId')
+    //     .populate('noteId').populate('shopId')
+
+    const order = await Order.find({})
+
+    res.json(order)
+
+})
+
+// GET Detail Order
+router.get('/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const order = await Order.findOne({ _id: id })
 
     res.json(order)
 
@@ -46,22 +59,18 @@ router.post('/', async(req, res) => {
 
 router.patch('/:id', async (req,res) =>{
 
-    try{
-        const _id = req.params.id
-        const status = req.body.status
+    const _id = req.params.id
+    const status = req.body.status
 
-        const order = await Order.findByIdAndUpdate(_id,{status: status},{
-            new:true
-        });
+    const order = await Order.findByIdAndUpdate(_id,{status: status},{
+        new:true
+    });
         
-        res.json(order)({
-            msg: "Transfer status success",
-            order
-        })
-    
-    }catch(e){
-        res.status(400).send(e);
-    }
+    res.json({
+        msg: "Transfer status success",
+        order
+    })
+
 })
 
 // DELETE order

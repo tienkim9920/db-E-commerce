@@ -8,7 +8,7 @@ const Product = require('../model/product.model')
 // GET Product all
 router.get('/', async(req, res) => {
 
-    const product = await Product.find({});
+    const product = await Product.find({})
 
     res.json(product)
 
@@ -19,12 +19,9 @@ router.get('/:id', async(req, res) => {
 
     const id = req.params.id
 
-    const product = await Product.find({ _id: id });
+    const product = await Product.findOne({ _id: id }).populate('shopId')
 
-    res.json(product)({
-        msg: "Get product by category success",
-        product
-    })
+    res.json(product)
 
 })
 
@@ -34,10 +31,7 @@ router.get('/list/outsale', async (req, res) => {
     // Lấy tất cả count of product = 1
     const productOutSale = await Product.find({count: { $eq: 0 } });
     
-    res.json(productOutSale)({
-        msg: "Get list product out of stock",
-        productOutSale
-    })
+    res.json(productOutSale)
 
 })
 
@@ -45,24 +39,18 @@ router.get('/list/outsale', async (req, res) => {
 router.get('/list/onsale', async (req, res) => {
     
     // Lấy tất cả count of product lớn hơn 1
-    const productOnSale = await Product.find({count: { $gte:1 }});
+    const productOnSale = await Product.find({count: { $gte: 1 }});
     
-    res.json(productOnSale)({
-        msg: "Get list product on sale",
-        productOnSale
-    })
+    res.json(productOnSale)
 })
 
 // GET List product sale 
 router.get('/list/sale', async (req, res) => {
     
     // Lấy tất cả discount of product lớn hơn 1
-    const productSale = await Product.find({discount: { $gte:1 }});
+    const productSale = await Product.find({discount: { $gte: 1 }});
         
-    res.json(productSale)({
-        msg: "Get list product sale",
-        productSale
-    })
+    res.json(productSale)
 })
 
 // POST Product
@@ -146,12 +134,12 @@ router.delete('/:id', async(req, res) => {
 })
 
 // GET Product Discount ExpireTime
-router.get('/discount', async(req, res) => {
+router.get('/sale/discount', async(req, res) => {
 
-    // Lọc theo điều kiện lớn hơn 1
-    const products = await Product.where('expiredTime').gte(1).limit(9)
+    // Lấy tất cả discount of product lớn hơn 1
+    const productSale = await Product.find({ discount: { $gte: 1 }});
 
-    res.json(products)
+    res.json(productSale)
 
 })
 

@@ -11,6 +11,11 @@ const schema = new Schema({
         type: String,
         required: true,
         ref: 'Shop'
+    },
+    checkingId: {
+        type: String,
+        required: true,
+        ref: 'Checking'
     }
 });
 

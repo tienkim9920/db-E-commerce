@@ -13,6 +13,17 @@ router.get('/', async (req, res) => {
 
 })
 
+// GET Option by productId
+router.get('/:productId', async (req, res) => {
+ 
+    const { productId } = req.params
+
+    const option = await Option.find({ productId })
+
+    res.json(option)
+
+})
+
 // POST Option
 router.post('/', async (req, res) => {
     
