@@ -9,7 +9,8 @@ const schema = new Schema({
     },
     address: String,
     lat: String,
-    lng: String
+    lng: String,
+    status: Boolean
 });
 
 const Address = mongoose.model('Address', schema, 'address');

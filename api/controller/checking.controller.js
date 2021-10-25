@@ -53,5 +53,45 @@ router.delete('/:id', async(req, res) => {
 
 })
 
+// PATCH Update Notice
+router.patch('/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const checking = await Checking.findOne({ _id: id })
+
+    const { permission } = req.body
+
+    if (permission.toString() === 'client'){
+        checking.noticeClient += 1
+    }else{
+        checking.noticeShop += 1
+    }
+
+    checking.save()
+
+    res.json({
+        msg: "Code 200"
+    })
+
+})
+
+// PATCH Checking
+router.patch('/checking/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const checking = await Checking.findOne({ _id: id })
+
+    checking.noticeClient = 0
+    checking.noticeShop = 0
+    checking.save()
+
+    res.json({
+        msg: "Code 200"
+    })
+
+})
+
 
 module.exports = router
