@@ -28,18 +28,28 @@ router.get('/:id', async (req, res) => {
 })
 
 // POST user
-router.post('/', async(req, res) => {
+router.post('/', async (req, res) => {
 
-    const passwordHash = await bcrypt.hash(req.body.password, 10)
+    const { email } = req.body
 
-    req.body.password = passwordHash
+    const user = await User.findOne({ email })
 
-    const user = await User.create(req.body)
+    if (user){
+        res.json({
+            msg: "Email was existed"
+        })
+    }else{
+        const passwordHash = await bcrypt.hash(req.body.password, 10)
 
-    res.json({
-        msg: "Thanh Cong",
-        user
-    })
+        req.body.password = passwordHash
+    
+        const user = await User.create(req.body)
+
+        res.json({
+            msg: "Code 200",
+            userId: user._id
+        })
+    }
 
 })
 
@@ -51,7 +61,7 @@ router.post('/login', async(req, res) => {
     const user = await User.findOne({ email: email }).populate(['authId'])
 
     if (user === null) {
-        res.json({ msg: "Không Tìm Thấy User" })
+        res.json({ msg: "Code 404" })
     } else {
 
         const auth = await bcrypt.compare(password, user.password)
@@ -63,8 +73,12 @@ router.post('/login', async(req, res) => {
             console.log(decoded.user)
 
             res.json({ 
-                msg: "Đăng nhập thành công", 
-                jwt: token 
+                msg: "Code 200", 
+                jwt: token,
+                userId: user._id,
+                permission: user.authId.auth,
+                name: user.name,
+                image: user.image
             })
         } else {
             res.json({ 
@@ -95,7 +109,7 @@ router.patch('/update/:id', async (req, res) => {
 
     const user = await User.findOne({ _id: id })
 
-    if (req.files.file){
+    if (req.body.checking === 'true'){
         var fileImage = req.files.file;
 
         var fileName = fileImage.name
@@ -114,7 +128,7 @@ router.patch('/update/:id', async (req, res) => {
     user.save()
 
     res.json({
-        msg: "Code 200"
+        msg: "Code 200",
     })
 
 })
