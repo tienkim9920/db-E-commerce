@@ -16,7 +16,7 @@ router.get('/', async(req, res) => {
 // GET Ticket User
 router.get('/:userId', async(req, res) => {
 
-    const ticket = await Ticket.find({ userId: req.params.userId });
+    const ticket = await Ticket.find({ userId: req.params.userId }).populate('tickId');
 
     res.json(ticket)
 
@@ -24,19 +24,15 @@ router.get('/:userId', async(req, res) => {
 
 // POST ticket
 router.post('/', async(req, res) => {
-    Ticket.create(req.body, function(err, result) {
-        if (err) {
-            res.json({
-                msg: "That bai",
-                err
-            })
-        } else {
-            res.json({
-                msg: "Thanh Cong",
-                result
-            })
-        }
-    });
+
+    const ticket = await Ticket.create(req.body)
+
+    const resTicket = await Ticket.findOne({ _id: ticket._id }).populate('tickId')
+
+    res.json({
+        msg: "Code 200",
+        result: resTicket
+    })
 })
 
 // DELETE ticket
