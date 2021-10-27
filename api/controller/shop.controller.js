@@ -35,31 +35,26 @@ router.post('/', async(req, res) => {
 
     res.json({
         msg: "Code 200",
-        shop
+        result: shop
     })
 
 })
 
 // Update info of shop :TN
 
-router.patch('/:id', async (req,res) =>{
+router.patch('/:id', async (req, res) =>{
 
-    try{
+    const _id = req.params.id
 
-        const _id = req.params.id
-
-        const shop = await Shop.findByIdAndUpdate(_id,req.body,{
-            new:true
-        });
+    const shop = await Shop.findByIdAndUpdate(_id, req.body,{
+        new:true
+    });
         
-        res.json(shop)({
-            msg: "Update info of shop success",
-            shop
-        })
+    res.json({
+        msg: "Update info of shop success",
+        result: shop
+    })
     
-    }catch(e){
-        res.status(400).send(e);
-    }
 })
 
 // DELETE shop

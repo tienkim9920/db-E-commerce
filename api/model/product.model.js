@@ -20,9 +20,9 @@ const schema = new Schema({
         type: Number,
         require: true
     },
+    description: String,
     image: Array,
     discount: Number,
-    count: Number,
     like: Number,
     comment: Number,
     expiredTime: Number
