@@ -8,6 +8,7 @@ const schema = new Schema({
         ref: 'Shop'
     },
     address: String,
+    phone: String,
     lat: String,
     lng: String,
     status: Boolean
