@@ -102,6 +102,22 @@ router.delete('/:id', async(req, res) => {
 
 })
 
+// PATCH update info user
+router.patch('/update/info/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const user = await User.findByIdAndUpdate(id, req.body,{
+        new: true
+    });
+        
+    res.json({
+        msg: "Update info of shop success",
+        result: user
+    })
+
+})
+
 // PATCH update profile user
 router.patch('/update/:id', async (req, res) => {
 
