@@ -19,12 +19,9 @@ router.get('/:id', async (req, res) => {
     
     const id = req.params.id
 
-    const shop = await Shop.find({_id: id});
+    const shop = await Shop.findOne({ _id: id });
     
-    res.json(shop)({
-        msg: "Get detail by userID success",
-        shop
-    })
+    res.json(shop)
 
 })
 
