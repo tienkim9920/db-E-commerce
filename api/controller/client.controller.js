@@ -5,26 +5,26 @@ const router = express.Router()
 const Client = require('../model/client.model')
 
 // GET Client all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const client = await Client.find({});
-    
+
     res.json(client)
 
 })
 
 // POST Client
-router.post('/', async (req, res) => {
-    
-    Client.create(req.body, function(err, result){
-        if(err) {
+router.post('/', async(req, res) => {
+
+    Client.create(req.body, function(err, result) {
+        if (err) {
             res.json({
-                msg:"Code 404",
+                msg: "Code 404",
                 err
             })
-        }else{
+        } else {
             res.json({
-                msg:"Code 200",
+                msg: "Code 200",
                 result
             })
         }
@@ -32,9 +32,14 @@ router.post('/', async (req, res) => {
 
 })
 
+router.get('/:userID', async(req, res) => {
+    const client = await Client.findOne({ userId: req.params.userID })
+    res.json(client)
+})
+
 // DELETE Client
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     Client.deleteOne({ _id: id }, function(err, result) {
@@ -54,7 +59,7 @@ router.delete('/:id', async (req, res) => {
 })
 
 // Checking Status Client by userId
-router.get('/checking/cart', async (req, res) => {
+router.get('/checking/cart', async(req, res) => {
 
     const { userId, code } = req.query
 
@@ -65,7 +70,7 @@ router.get('/checking/cart', async (req, res) => {
 })
 
 // PATCH status client by userId
-router.patch('/update/:userId', async (req, res) => {
+router.patch('/update/:userId', async(req, res) => {
 
     const { userId } = req.params
 
@@ -81,8 +86,9 @@ router.patch('/update/:userId', async (req, res) => {
 
 })
 
+
 // PATCH Limit client by userId
-router.patch('/:userId', async (req, res) => {
+router.patch('/:userId', async(req, res) => {
 
     const { userId } = req.params
 
