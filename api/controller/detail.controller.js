@@ -16,8 +16,7 @@ router.get('/', async(req, res) => {
 // GET detail orderID
 router.get('/order', async(req, res) => {
     const { orderId } = req.query
-    const detail = await Detail.find({ orderId: orderId }).populate('productId')
-
+    const detail = await Detail.find({ orderId: orderId }).populate('productId').populate('orderId')
     res.json(detail)
 
 })

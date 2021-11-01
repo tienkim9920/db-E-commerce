@@ -17,7 +17,7 @@ router.get('/', async(req, res) => {
 })
 
 //GET user detail
-router.get('/:id', async (req, res) => {
+router.get('/:id', async(req, res) => {
 
     const { id } = req.params
 
@@ -28,21 +28,21 @@ router.get('/:id', async (req, res) => {
 })
 
 // POST user
-router.post('/', async (req, res) => {
+router.post('/', async(req, res) => {
 
     const { email } = req.body
 
     const user = await User.findOne({ email })
 
-    if (user){
+    if (user) {
         res.json({
             msg: "Email was existed"
         })
-    }else{
+    } else {
         const passwordHash = await bcrypt.hash(req.body.password, 10)
 
         req.body.password = passwordHash
-    
+
         const user = await User.create(req.body)
 
         res.json({
@@ -69,11 +69,11 @@ router.post('/login', async(req, res) => {
         if (auth) {
             var token = jwt.sign({ user: user }, 'shhhhh');
 
-            var decoded = jwt.verify(token, 'shhhhh');
-            console.log(decoded.user)
+            // var decoded = jwt.verify(token, 'shhhhh');
+            // console.log(decoded.user)
 
-            res.json({ 
-                msg: "Code 200", 
+            res.json({
+                msg: "Code 200",
                 jwt: token,
                 userId: user._id,
                 permission: user.authId.auth,
@@ -81,7 +81,7 @@ router.post('/login', async(req, res) => {
                 image: user.image
             })
         } else {
-            res.json({ 
+            res.json({
                 msg: "Sai mật khẩu"
             })
         }
@@ -103,17 +103,17 @@ router.delete('/:id', async(req, res) => {
 })
 
 // PATCH update profile user
-router.patch('/update/:id', async (req, res) => {
+router.patch('/update/:id', async(req, res) => {
 
     const { id } = req.params;
 
     const user = await User.findOne({ _id: id })
 
-    if (req.body.checking === 'true'){
+    if (req.body.checking === 'true') {
         var fileImage = req.files.file;
 
         var fileName = fileImage.name
-    
+
         // var fileProduct = "https://server-lover.herokuapp.com/" + fileName
         var fileUser = "http://localhost:4000/" + fileName
 
@@ -133,4 +133,16 @@ router.patch('/update/:id', async (req, res) => {
 
 })
 
+router.post('/changePassword', async(req, res) => {
+    console.log(req.body)
+    const salt = await bcrypt.genSalt();
+    req.body.newPassword = await bcrypt.hash(req.body.newPassword, salt);
+    // var token = jwt.sign({ user: user }, 'shhhhh');
+    User.updateOne({ $or: [{ _id: req.body.id }, { email: req.body.email }] }, { password: req.body.newPassword }, (err, result) => {
+        if (err) return res.json({ msg: err });
+        res.json({ msg: "Bạn đã thay đổi thành công" })
+    });
+
+
+})
 module.exports = router

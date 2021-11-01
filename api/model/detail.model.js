@@ -4,11 +4,13 @@ const { Schema } = mongoose;
 const schema = new Schema({
     productId: {
         type: String,
-        required: true
+        required: true,
+        ref: 'Product'
     },
     orderId: {
         type: String,
-        required: true
+        required: true,
+        ref: 'Order'
     },
     count: Number,
     size: String,
