@@ -14,13 +14,24 @@ router.get('/', async(req, res) => {
 
 })
 
-// GET detail shop by ID :TN
+// GET detail shop by _id
 router.get('/:id', async (req, res) => {
     
     const id = req.params.id
 
     const shop = await Shop.findOne({ _id: id });
     
+    res.json(shop)
+
+})
+
+// GET detail shop by userId
+router.get('/detail/:userId', async (req, res) => {
+
+    const { userId } = req.params
+
+    const shop = await Shop.findOne({ userId })
+
     res.json(shop)
 
 })

@@ -69,7 +69,7 @@ router.get('/:code', async (req, res) => {
 
     const { code } = req.params
 
-    const coup = await Coup.findOne({ code }).populate('shopId')
+    const coup = await Coup.findOne({ code })
 
     res.json(coup)
     
