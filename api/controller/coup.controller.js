@@ -18,12 +18,9 @@ router.get('/coup', async (req, res) => {
     
     const shopId = req.query.shopId
 
-    const coup = await Coup.find({shopId: shopId});
+    const coup = await Coup.find({ shopId: shopId });
     
-    res.json(coup)({
-        msg: "Get coup by shopId success",
-        coup
-    })
+    res.json(coup)
 
 })
 
@@ -72,7 +69,7 @@ router.get('/:code', async (req, res) => {
 
     const { code } = req.params
 
-    const coup = await Coup.findOne({ code })
+    const coup = await Coup.findOne({ code }).populate('shopId')
 
     res.json(coup)
     

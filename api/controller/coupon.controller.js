@@ -80,11 +80,12 @@ router.delete('/:id', async(req, res) => {
 })
 
 // Checking Coupon by GET Detail coupon with field userId, coupId
-router.get('/checking', async(req, res) => {
+router.get('/checking/status', async(req, res) => {
 
     const { userId, coupId } = req.query
 
     // Duyệt theo điều kiện và return true false
+    
     const checking = await Coupon.exists({ userId, coupId, status: true }) ? 'Status True' : 'Status False'
 
     res.json(checking)

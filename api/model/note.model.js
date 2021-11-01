@@ -2,11 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const schema = new Schema({
-    distanceId: {
-        type: String,
-        required: true,
-        ref: 'Distance'
-    },
+    fee: Number,
     name: String,
     phone: String,
     address: String
