@@ -14,7 +14,6 @@ router.get('/', async(req, res) => {
 })
 
 // Get address by shopID
-
 router.get('/address', async (req, res) => {
     
     const shopId = req.query.shopId
@@ -25,6 +24,16 @@ router.get('/address', async (req, res) => {
         msg: "Get order by status success",
         address
     })
+
+})
+
+router.get('/address/:shopId', async (req, res) => {
+
+    const { shopId } = req.params
+
+    const address = await Address.findOne({ shopId, status: true })
+
+    res.json(address)
 
 })
 
