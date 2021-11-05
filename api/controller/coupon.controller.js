@@ -19,7 +19,7 @@ router.get('/:userId', async (req, res) => {
 
     const { userId } = req.params
 
-    const coupon = await Coupon.find({ userId })
+    const coupon = await Coupon.find({ userId }).populate('coupId')
 
     res.json(coupon)
 

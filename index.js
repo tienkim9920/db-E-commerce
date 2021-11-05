@@ -5,6 +5,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+const fetch = require('node-fetch')
 
 const PORT = process.env.PORT || 4000;
 
@@ -80,8 +81,22 @@ app.use('/ticket', ticket)
 app.use('/user', user)
 // Import controller API
 
-app.get('/', (req, res) => {
-    res.json("Thanh cong")
+app.get('/tinh', async (req, res) => {
+    const respond = await fetch('https://api.mysupership.vn/v1/partner/areas/province')
+    const data = await respond.json()
+    res.json(data)
+})
+
+app.get('/quan', async (req, res) => {
+    const respond = await fetch(`https://api.mysupership.vn/v1/partner/areas/district?province=${req.query.code}`)
+    const data = await respond.json()
+    res.json(data)
+})
+
+app.get('/phuong', async (req, res) => {
+    const respond = await fetch(`https://api.mysupership.vn/v1/partner/areas/commune?district=${req.query.code}`)
+    const data = await respond.json()
+    res.json(data)
 })
 
 io.on('connection', async (socket) => {
