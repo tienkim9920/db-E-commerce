@@ -88,20 +88,22 @@ router.patch('/update/:userId', async(req, res) => {
 
 
 // PATCH Limit client by userId
-router.patch('/:userId', async(req, res) => {
+router.patch('/:userId', async (req, res) => {
 
     const { userId } = req.params
 
-    const { limit } = req.body
-
-    const client = await Client.findOne({ userId })
-
-    client.limit = limit
-
-    client.save()
-
-    res.json({
-        msg: "Code 200"
+    Client.updateOne({ userId }, req.body, function(err, result) {
+        if (err) {
+            res.json({
+                msg: "Code 404",
+                err
+            })
+        } else {
+            res.json({
+                msg: "Code 200",
+                result
+            })
+        }
     })
 
 })
