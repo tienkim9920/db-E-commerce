@@ -101,6 +101,15 @@ app.get('/phuong', async (req, res) => {
 
 io.on('connection', async (socket) => {
     console.log('a user connected', socket.id);
+
+    socket.on('joinCart', data => {
+        console.log(`${socket.id} da tham gia phong ${data}`)
+        socket.join(data)
+    })
+
+    socket.on('verifyCart', data => {
+        socket.to(data.room).emit('verifyCart', data.cart)
+    })
 });
   
 server.listen(PORT, () => {

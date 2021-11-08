@@ -61,11 +61,16 @@ router.delete('/:id', async(req, res) => {
 // Checking Status Client by userId
 router.get('/checking/cart', async(req, res) => {
 
-    const { userId, code } = req.query
+    const { code } = req.query
 
-    const client = await Client.exists({ userId, code, statusOrder: true }) ? "Status Open" : "Status Close"
+    const client = await Client.exists({ code, statusOrder: true })
 
-    res.json(client)
+    if (client){
+        const data = await Client.findOne({ code })
+        res.json(data)
+    }else{
+        res.json(client)
+    }
 
 })
 
