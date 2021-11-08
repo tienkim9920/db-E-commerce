@@ -48,7 +48,7 @@ router.post('/', async(req, res) => {
 
 // Update address of shop 
 
-router.patch('/address/:id', async (req,res) =>{
+router.patch('/:id', async (req,res) =>{
 
     try{
 
@@ -74,7 +74,7 @@ router.patch('/address/:id', async (req,res) =>{
 router.delete('/:id', async(req, res) => {
 
     const id = req.params.id
-    console.log(id)
+
     const address = await Address.deleteOne({ _id: id })
 
     res.json({

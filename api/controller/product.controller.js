@@ -25,6 +25,17 @@ router.get('/:id', async(req, res) => {
 
 })
 
+// Get detail product by shopId
+router.get('/listProduct/:shopId', async(req, res) => {
+
+    const { shopId } = req.params
+
+    const product = await Product.find({ shopId });
+
+    res.json(product)
+
+})
+
 // GET List product out of stock
 router.get('/list/outsale', async (req, res) => {
     
@@ -56,19 +67,12 @@ router.get('/list/sale', async (req, res) => {
 // POST Product
 router.post('/', async(req, res) => {
 
-    const product = await Product.create(req.body, function(err, result) {
-        if (err) {
-            res.json({
-                msg: "0",
-                err
-            })
-        } else {
-            res.json({
-                msg: "1",
-                result
-            })
-        }
-    });
+    const product = await Product.create(req.body)
+
+    res.json({
+        msg: "Code 200",
+        product
+    })
 
 })
 
