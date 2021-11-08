@@ -15,11 +15,11 @@ router.get('/', async(req, res) => {
 })
 
 // GET LIST all coupon by userId
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', async(req, res) => {
 
     const { userId } = req.params
 
-    const coupon = await Coupon.find({ userId })
+    const coupon = await Coupon.find({ userId }).populate('coupId')
 
     res.json(coupon)
 
@@ -85,7 +85,7 @@ router.get('/checking/status', async(req, res) => {
     const { userId, coupId } = req.query
 
     // Duyệt theo điều kiện và return true false
-    
+
     const checking = await Coupon.exists({ userId, coupId, status: true }) ? 'Status True' : 'Status False'
 
     res.json(checking)
