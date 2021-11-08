@@ -25,31 +25,179 @@ router.get('/:id', async(req, res) => {
 
 })
 
+// Get detail product by ID 
+router.get('/category/:id', async(req, res) => {
+
+    const page = req.query.page || 1
+
+    const pageSize = req.query.pageSize || 8
+
+    const id = req.params.id || "all"
+
+    const place = req.query.place ? req.query.place.split(",") : []
+
+    const category = req.query.category ? req.query.category.split(",") : []
+
+    const search = req.query.keyWord || ""
+
+    const type = req.query.type || ""
+
+    const minPrice = Number(req.query.minPrice) || -999999999999999
+
+    const maxPrice = Number(req.query.maxPrice) || 999999999999999
+
+
+    let start = (page - 1) * pageSize;
+    let end = page * pageSize;
+
+    let query = {}
+
+    query.id = id !== "all" && id !== "search" ? { categoryId: id } : {}
+
+    query.place = place.length > 0 ? { "shopId.name": { $in: place } } : {}
+    query.category = category.length > 0 ? { "categoryId.name": { $in: category } } : {}
+
+    switch (type) {
+        case '1':
+            query.type = { numberSell: -1 };
+            break;
+        case '2':
+            query.type = { _id: -1 };
+            break;
+        case '3':
+            query.type = { priceDiscount: -1 };
+            break;
+        case '4':
+            query.type = { priceDiscount: 1 };
+            break;
+        default:
+            query.type = { _id: 1 };
+    }
+
+    const product = await Product.aggregate([
+
+        {
+            $match: query.id
+        },
+
+        { $match: { name: { $regex: search, $options: 'i' } } },
+
+        {
+            $addFields: {
+                shopId: { $toObjectId: "$shopId" },
+                _id: { $toString: "$_id" },
+                categoryId: { $toObjectId: "$categoryId" },
+                priceDiscount: {
+                    $subtract: [
+                        "$price",
+                        {
+                            $divide: [{
+                                $multiply: [
+                                    "$price",
+                                    "$discount"
+                                ]
+
+                            }, 100]
+                        }
+                    ]
+                }
+            }
+        },
+
+        {
+            $lookup: {
+                from: 'category',
+                localField: "categoryId",
+                foreignField: "_id",
+                as: 'categoryId'
+            }
+        },
+        {
+            $lookup: {
+                from: 'shop',
+                localField: "shopId",
+                foreignField: "_id",
+                as: 'shopId'
+            }
+        },
+
+        {
+            $unwind: {
+                path: "$shopId",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+
+        {
+            $unwind: {
+                path: "$categoryId",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+
+
+
+        { $match: { "price": { $gte: minPrice, $lte: maxPrice } } },
+
+        {
+            $match: query.place
+        },
+
+        {
+            $match: query.category
+        },
+
+        {
+            $lookup: {
+                from: 'detail',
+                localField: "_id",
+                foreignField: "productId",
+                as: 'numberSell'
+            },
+        },
+
+        {
+            $addFields: {
+                numberSell: { $size: "$numberSell" },
+            }
+        },
+
+        {
+            $sort: query.type
+        }
+
+    ])
+
+    res.json({ product: product.slice(start, end), total: product.length })
+
+
+})
+
 // GET List product out of stock
-router.get('/list/outsale', async (req, res) => {
-    
+router.get('/list/outsale', async(req, res) => {
+
     // Lấy tất cả count of product = 1
-    const productOutSale = await Product.find({count: { $eq: 0 } });
-    
+    const productOutSale = await Product.find({ count: { $eq: 0 } });
+
     res.json(productOutSale)
 
 })
 
 // GET List product on-sale
-router.get('/list/onsale', async (req, res) => {
-    
+router.get('/list/onsale', async(req, res) => {
+
     // Lấy tất cả count of product lớn hơn 1
-    const productOnSale = await Product.find({count: { $gte: 1 }});
-    
+    const productOnSale = await Product.find({ count: { $gte: 1 } });
+
     res.json(productOnSale)
 })
 
 // GET List product sale 
-router.get('/list/sale', async (req, res) => {
-    
+router.get('/list/sale', async(req, res) => {
+
     // Lấy tất cả discount of product lớn hơn 1
-    const productSale = await Product.find({discount: { $gte: 1 }});
-        
+    const productSale = await Product.find({ discount: { $gte: 1 } });
+
     res.json(productSale)
 })
 
@@ -137,7 +285,7 @@ router.delete('/:id', async(req, res) => {
 router.get('/sale/discount', async(req, res) => {
 
     // Lấy tất cả discount of product lớn hơn 1
-    const productSale = await Product.find({ discount: { $gte: 1 }});
+    const productSale = await Product.find({ discount: { $gte: 1 } });
 
     res.json(productSale)
 
