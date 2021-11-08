@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const schema = new Schema({
-    fee: Number,
     name: String,
     phone: String,
     address: String

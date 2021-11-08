@@ -61,11 +61,16 @@ router.delete('/:id', async(req, res) => {
 // Checking Status Client by userId
 router.get('/checking/cart', async(req, res) => {
 
-    const { userId, code } = req.query
+    const { code } = req.query
 
-    const client = await Client.exists({ userId, code, statusOrder: true }) ? "Status Open" : "Status Close"
+    const client = await Client.exists({ code, statusOrder: true })
 
-    res.json(client)
+    if (client){
+        const data = await Client.findOne({ code })
+        res.json(data)
+    }else{
+        res.json(client)
+    }
 
 })
 
@@ -88,20 +93,22 @@ router.patch('/update/:userId', async(req, res) => {
 
 
 // PATCH Limit client by userId
-router.patch('/:userId', async(req, res) => {
+router.patch('/:userId', async (req, res) => {
 
     const { userId } = req.params
 
-    const { limit } = req.body
-
-    const client = await Client.findOne({ userId })
-
-    client.limit = limit
-
-    client.save()
-
-    res.json({
-        msg: "Code 200"
+    Client.updateOne({ userId }, req.body, function(err, result) {
+        if (err) {
+            res.json({
+                msg: "Code 404",
+                err
+            })
+        } else {
+            res.json({
+                msg: "Code 200",
+                result
+            })
+        }
     })
 
 })

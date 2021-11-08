@@ -7,7 +7,7 @@ const Note = require('../model/note.model')
 // GET note all
 router.get('/', async(req, res) => {
 
-    const note = await Note.find({}).populate('distanceId')
+    const note = await Note.find({})
 
     res.json(note)
 
@@ -20,7 +20,7 @@ router.post('/', async(req, res) => {
 
     res.json({
         msg: "Thanh Cong",
-        note
+        result: note
     })
 
 })

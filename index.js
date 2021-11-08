@@ -5,8 +5,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
 
 const PORT = process.env.PORT || 4000;
 
@@ -100,9 +99,17 @@ app.get('/phuong', async (req, res) => {
     res.json(data)
 })
 
-
 io.on('connection', async (socket) => {
     console.log('a user connected', socket.id);
+
+    socket.on('joinCart', data => {
+        console.log(`${socket.id} da tham gia phong ${data}`)
+        socket.join(data)
+    })
+
+    socket.on('verifyCart', data => {
+        socket.to(data.room).emit('verifyCart', data.cart)
+    })
 });
   
 server.listen(PORT, () => {

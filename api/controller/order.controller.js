@@ -22,7 +22,7 @@ router.get('/:id', async(req, res) => {
 
     const { id } = req.params
 
-    const order = await Order.findOne({ _id: id }).populate(['payId', 'userId'])
+    const order = await Order.findOne({ _id: id }).populate(['payId', 'userId', 'noteId'])
 
     res.json(order)
 
@@ -60,7 +60,7 @@ router.post('/', async(req, res) => {
 
     res.json({
         msg: "Thanh Cong",
-        order
+        result: order
     })
 
 })

@@ -1,5 +1,4 @@
 const express = require('express')
-var mongoose = require('mongoose');
 
 const router = express.Router()
 
@@ -59,6 +58,17 @@ router.get('/category/:id', async(req, res) => {
         { $group: { _id: "$shop._id", name: { "$first": "$shop.name" } } }
     ])
 
+
+    res.json(shop)
+
+})
+
+// GET detail shop by userId
+router.get('/detail/:userId', async(req, res) => {
+
+    const { userId } = req.params
+
+    const shop = await Shop.findOne({ userId })
 
     res.json(shop)
 

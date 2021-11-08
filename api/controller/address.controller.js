@@ -14,27 +14,24 @@ router.get('/', async(req, res) => {
 })
 
 // Get address by shopID
-router.get('/address', async (req, res) => {
+router.get('/detail/:shopId', async (req, res) => {
     
-    const shopId = req.query.shopId
+    const { shopId } = req.params
 
-    const address = await Address.find({shopId: shopId});
+    const address = await Address.find({ shopId });
     
-    res.json(address)({
-        msg: "Get order by status success",
-        address
-    })
+    res.json(address)
 
 })
 
-router.get('/address/:shopId', async (req, res) => {
+// Get detail address by addressID
+router.get('/detailAddress/:id', async (req, res) =>{
 
-    const { shopId } = req.params
+    const { id } = req.params
 
-    const address = await Address.findOne({ shopId, status: true })
+    const address = await Address.findOne({ id });
 
     res.json(address)
-
 })
 
 // POST address
@@ -77,7 +74,7 @@ router.patch('/address/:id', async (req,res) =>{
 router.delete('/:id', async(req, res) => {
 
     const id = req.params.id
-
+    console.log(id)
     const address = await Address.deleteOne({ _id: id })
 
     res.json({
