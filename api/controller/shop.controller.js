@@ -7,9 +7,9 @@ const Product = require('../model/product.model')
 
 // GET shop all
 router.get('/', async(req, res) => {
+    const limit = Number(req.query.limit) || ""
 
-    const shop =
-        await Shop.find({})
+    const shop = await Shop.find({}).limit(limit)
 
     res.json(shop)
 
@@ -29,6 +29,7 @@ router.get('/:id', async(req, res) => {
 // GET Shop Category
 router.get('/category/:id', async(req, res) => {
     const id = req.params.id
+    const limit = Number(req.query.limit) || 5
 
     const search = req.query.keyWord || ""
     let query = {}
@@ -43,20 +44,22 @@ router.get('/category/:id', async(req, res) => {
                 from: 'shop',
                 localField: "_id",
                 foreignField: "_id",
-                as: 'shop'
+                as: 'shopId'
             }
         },
         {
-            $unwind: "$shop"
+            $unwind: "$shopId"
         },
         {
             $project: {
                 _id: 0,
-                shop: 1
+                shopId: 1
             }
         },
-        { $group: { _id: "$shop._id", name: { "$first": "$shop.name" } } }
-    ])
+
+        { $sort: { "shopId.reply": -1 } },
+
+    ]).limit(limit)
 
 
     res.json(shop)
