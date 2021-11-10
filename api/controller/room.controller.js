@@ -44,7 +44,7 @@ router.get('/list/clientId/:id', async (req, res) => {
 
     const { id } = req.params
 
-    const rooms = await Room.find({ clientId: id })
+    const rooms = await Room.find({ clientId: id }).populate('shopId')
 
     res.json(rooms)
 
@@ -55,9 +55,22 @@ router.get('/list/shopId/:id', async (req, res) => {
     
     const { id } = req.params
 
-    const rooms = await Room.find({ shopId: id })
+    const rooms = await Room.find({ shopId: id }).populate('clientId')
 
     res.json(rooms)
+
+})
+
+// Checking
+router.get('/checking', async (req, res) => {
+
+    const { clientId, shopId } = req.query
+
+    const room = await Room.findOne({ clientId, shopId })
+
+    const checking = await Room.exists({ clientId, shopId }) ? room : false
+
+    res.json(checking)
 
 })
 

@@ -71,7 +71,7 @@ router.patch('/:id', async (req, res) => {
     checking.save()
 
     res.json({
-        msg: "Code 200"
+        result: "Code 200"
     })
 
 })

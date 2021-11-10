@@ -8,8 +8,7 @@ const schema = new Schema({
         ref: 'Product'
     },
     size: String,
-    count: Number,
-    kilogram: Number
+    count: Number
 });
 
 const Option = mongoose.model('Option', schema, 'option');

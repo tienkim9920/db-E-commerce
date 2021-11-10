@@ -108,7 +108,7 @@ io.on('connection', async (socket) => {
     })
 
     socket.on('verifyCart', data => {
-        socket.to(data.room).emit('verifyCart', data.cart)
+        socket.to(data.room).emit('verifyCart', data)
     })
 });
   

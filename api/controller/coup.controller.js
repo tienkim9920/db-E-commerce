@@ -18,7 +18,7 @@ router.get('/coup', async (req, res) => {
     
     const shopId = req.query.shopId
 
-    const coup = await Coup.find({ shopId: shopId });
+    const coup = await Coup.find({ shopId });
     
     res.json(coup)
 
