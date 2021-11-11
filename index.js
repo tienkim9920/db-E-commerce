@@ -102,13 +102,29 @@ app.get('/phuong', async (req, res) => {
 io.on('connection', async (socket) => {
     console.log('a user connected', socket.id);
 
+    // Tham gia vào giỏ hàng
     socket.on('joinCart', data => {
         console.log(`${socket.id} da tham gia phong ${data}`)
         socket.join(data)
     })
 
+    // Xác nhận giao dịch
     socket.on('verifyCart', data => {
         socket.to(data.room).emit('verifyCart', data)
+    })
+
+    socket.on('joinChat', roomId => {
+        socket.join(roomId)
+    })
+
+    // Gửi tin nhắn
+    socket.on('sendMessage', data => {
+        socket.to(data.roomId).emit('sendMessage', data)
+    })
+
+    // Gõ bàn phím
+    socket.on('typing', data => {
+        socket.to(data.roomId).emit('typing', data)
     })
 });
   

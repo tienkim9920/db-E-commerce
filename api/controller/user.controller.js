@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../model/user.model');
 const Client = require('../model/client.model')
+const Shop = require('../model/shop.model')
 
 // GET user all
 router.get('/', async(req, res) => {
@@ -61,7 +62,14 @@ router.post('/login', async(req, res) => {
 
     const user = await User.findOne({ email: email }).populate(['authId'])
 
-    const client = await Client.findOne({ userId: user._id })
+    let subject
+
+    // Kiểm tra quyền
+    if (user.authId.auth === 'client'){
+        subject = await Client.findOne({ userId: user._id })
+    }else if (user.authId.auth === 'shop'){
+        subject = await Shop.findOne({ userId: user._id })
+    }
 
     if (user === null) {
         res.json({ msg: "Code 404" })
@@ -78,7 +86,7 @@ router.post('/login', async(req, res) => {
             res.json({
                 jwt: token,
                 userId: user._id,
-                clientId: client._id,
+                subjectId: subject._id,
                 permission: user.authId.auth,
                 name: user.name,
                 image: user.image

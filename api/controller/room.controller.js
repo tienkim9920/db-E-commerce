@@ -55,7 +55,14 @@ router.get('/list/shopId/:id', async (req, res) => {
     
     const { id } = req.params
 
-    const rooms = await Room.find({ shopId: id }).populate('clientId')
+    // Mutiple populate
+    const rooms = await Room.find({ shopId: id }).populate([{
+        path: 'clientId',
+        populate: {
+            path: 'userId',
+            model: 'User'
+        }
+    }])
 
     res.json(rooms)
 
