@@ -29,7 +29,7 @@ router.get('/detailAddress/:id', async (req, res) =>{
 
     const { id } = req.params
 
-    const address = await Address.findOne({ id });
+    const address = await Address.findOne({ _id: id });
 
     res.json(address)
 })
