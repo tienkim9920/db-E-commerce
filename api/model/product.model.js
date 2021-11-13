@@ -25,6 +25,7 @@ const schema = new Schema({
     discount: Number,
     like: Number,
     comment: Number,
+    stock: Boolean,
     expiredTime: Number
 });
 
