@@ -19,7 +19,18 @@ router.get('/detail', async(req, res) => {
 
     const reputation = await Reputation.find({
         $or: [{ userId: userId }, { shopId: shopId }]
-    })
+    }).populate('userId')
+
+    res.json(reputation)
+
+})
+
+// GET Checking reputation
+router.get('/checking', async (req, res) => {
+
+    const { userId, shopId } = req.query
+
+    const reputation = await Reputation.exists({ userId, shopId })
 
     res.json(reputation)
 
@@ -27,27 +38,30 @@ router.get('/detail', async(req, res) => {
 
 // POST reputation
 router.post('/', async(req, res) => {
-    Reputation.create(req.body, function(err, result) {
+    Reputation.create(req.body, async function(err, result) {
         if (err) {
             res.json({
                 msg: "That bai",
                 err
             })
         } else {
+
+            const reputation = await Reputation.findOne({ _id: result._id }).populate('userId')
+
             res.json({
                 msg: "Thanh Cong",
-                result
+                result: reputation
             })
         }
     });
 })
 
 // DELETE reputation
-router.delete('/:id', async(req, res) => {
+router.delete('/delete', async (req, res) => {
 
-    const id = req.params.id
+    const { userId, shopId } = req.query
 
-    Reputation.deleteOne({ _id: id }, function(err, result) {
+    Reputation.deleteOne({ userId, shopId }, function(err, result) {
         if (err) {
             res.json({
                 msg: "That bai",

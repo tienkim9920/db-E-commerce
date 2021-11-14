@@ -16,7 +16,7 @@ router.get('/', async(req, res) => {
 // GET Comment Product
 router.get('/:productId', async(req, res) => {
 
-    const comment = await Comment.find({ productId: req.params.productId });
+    const comment = await Comment.find({ productId: req.params.productId }).populate('userId');
 
     res.json(comment)
 

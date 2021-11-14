@@ -240,7 +240,7 @@ router.patch('/:id', async(req, res) => {
 })
 
 // Update Product like
-router.patch('/like/:id', async(req, res) => {
+router.get('/like/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -254,7 +254,7 @@ router.patch('/like/:id', async(req, res) => {
 })
 
 // Update Product dislike
-router.patch('/dislike/:id', async(req, res) => {
+router.get('/dislike/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -297,7 +297,7 @@ router.get('/shop/pagination', async(req, res) => {
     const { page, shopId } = req.query
 
     // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
-    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 8).limit(8)
+    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 4).limit(4)
 
     res.json(products)
 
@@ -316,7 +316,7 @@ router.get('/home/pagination', async(req, res) => {
 })
 
 // Search All Product by Name
-router.get('/search', async(req, res) => {
+router.get('/search/word', async(req, res) => {
 
     const { word } = req.query
 
