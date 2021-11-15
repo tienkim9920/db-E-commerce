@@ -64,5 +64,21 @@ router.delete('/:id', async (req, res) => {
 
 })
 
+// Update Option
+router.patch('/:id', async(req, res) => {
+
+    const _id = req.params.id
+
+    const option = await Option.findByIdAndUpdate(_id, req.body, {
+        new: true
+    });
+
+    res.json({
+        msg: "Update info of option success",
+        result: option
+    })
+
+})
+
 
 module.exports = router

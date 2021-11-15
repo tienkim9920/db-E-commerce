@@ -39,11 +39,11 @@ router.post('/', async(req, res) => {
 })
 
 // DELETE like
-router.delete('/:id', async(req, res) => {
+router.delete('/delete', async (req, res) => {
 
-    const id = req.params.id
+    const { userId, productId } = req.query
 
-    const like = await Like.deleteOne({ _id: id })
+    const like = await Like.deleteOne({ userId, productId })
 
     res.json({
         msg: "Code 200",

@@ -32,8 +32,8 @@ router.post('/', async(req, res) => {
 
 })
 
-router.get('/:userID', async(req, res) => {
-    const client = await Client.findOne({ userId: req.params.userID })
+router.get('/:id', async(req, res) => {
+    const client = await Client.findOne({ _id: req.params.id })
     res.json(client)
 })
 

@@ -244,7 +244,7 @@ router.patch('/:id', async(req, res) => {
 })
 
 // Update Product like
-router.patch('/like/:id', async(req, res) => {
+router.get('/like/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -258,7 +258,7 @@ router.patch('/like/:id', async(req, res) => {
 })
 
 // Update Product dislike
-router.patch('/dislike/:id', async(req, res) => {
+router.get('/dislike/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -269,6 +269,21 @@ router.patch('/dislike/:id', async(req, res) => {
     product.save()
 
     res.json("Thanh Cong")
+})
+
+// Update Product count comment
+router.get('/comment/:id', async (req, res) => {
+
+    const _id = req.params.id
+
+    const product = await Product.findOne({ _id })
+
+    product.comment = Number(product.comment) + 1
+
+    product.save()
+
+    res.json("Thanh Cong")
+
 })
 
 // DELETE Product
@@ -301,7 +316,7 @@ router.get('/shop/pagination', async(req, res) => {
     const { page, shopId } = req.query
 
     // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
-    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 8).limit(8)
+    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 4).limit(4)
 
     res.json(products)
 
@@ -319,8 +334,20 @@ router.get('/home/pagination', async(req, res) => {
 
 })
 
+//GET All Newfeed Product Pagination
+router.get('/newfeed/pagination', async(req, res) => {
+
+    const { page } = req.query
+
+    // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
+    const products = await Product.find({}).skip((page - 1) * 3).limit(3).populate('shopId')
+
+    res.json(products)
+
+})
+
 // Search All Product by Name
-router.get('/search', async(req, res) => {
+router.get('/search/word', async(req, res) => {
 
     const { word } = req.query
 

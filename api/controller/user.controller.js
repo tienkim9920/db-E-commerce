@@ -5,7 +5,9 @@ const router = express.Router()
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 
-const User = require('../model/user.model')
+const User = require('../model/user.model');
+const Client = require('../model/client.model')
+const Shop = require('../model/shop.model')
 
 // GET user all
 router.get('/', async(req, res) => {
@@ -60,6 +62,15 @@ router.post('/login', async(req, res) => {
 
     const user = await User.findOne({ email: email }).populate(['authId'])
 
+    let subject
+
+    // Kiểm tra quyền
+    if (user.authId.auth === 'client'){
+        subject = await Client.findOne({ userId: user._id })
+    }else if (user.authId.auth === 'shop'){
+        subject = await Shop.findOne({ userId: user._id })
+    }
+
     if (user === null) {
         res.json({ msg: "Code 404" })
     } else {
@@ -73,16 +84,16 @@ router.post('/login', async(req, res) => {
             // console.log(decoded.user)
 
             res.json({
-                msg: "Code 200",
                 jwt: token,
                 userId: user._id,
+                subjectId: subject._id,
                 permission: user.authId.auth,
                 name: user.name,
                 image: user.image
             })
         } else {
             res.json({
-                msg: "Sai mật khẩu"
+                msg: "Code 404"
             })
         }
     }
