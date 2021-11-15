@@ -79,4 +79,20 @@ router.get('/list/userId', async (req, res) => {
 
 })
 
+// PATCH update ticket
+router.patch('/update/ticket/:id', async (req, res) => {
+
+    const { id } = req.params
+
+    const ticket = await Ticket.findByIdAndUpdate(id, req.body,{
+        new: true
+    });
+        
+    res.json({
+        msg: "Update info of ticket success",
+        result: ticket
+    })
+
+})
+
 module.exports = router
