@@ -267,6 +267,21 @@ router.get('/dislike/:id', async(req, res) => {
     res.json("Thanh Cong")
 })
 
+// Update Product count comment
+router.get('/comment/:id', async (req, res) => {
+
+    const _id = req.params.id
+
+    const product = await Product.findOne({ _id })
+
+    product.comment = Number(product.comment) + 1
+
+    product.save()
+
+    res.json("Thanh Cong")
+
+})
+
 // DELETE Product
 router.delete('/:id', async(req, res) => {
 
@@ -310,6 +325,18 @@ router.get('/home/pagination', async(req, res) => {
 
     // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
     const products = await Product.find({}).skip((page - 1) * 8).limit(8)
+
+    res.json(products)
+
+})
+
+//GET All Newfeed Product Pagination
+router.get('/newfeed/pagination', async(req, res) => {
+
+    const { page } = req.query
+
+    // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
+    const products = await Product.find({}).skip((page - 1) * 3).limit(3).populate('shopId')
 
     res.json(products)
 
