@@ -22,6 +22,7 @@ const schema = new Schema({
     },
     description: String,
     image: Array,
+    count: Number,
     discount: Number,
     like: Number,
     comment: Number,

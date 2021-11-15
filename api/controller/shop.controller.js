@@ -90,13 +90,17 @@ router.post('/', async(req, res) => {
 
 router.patch('/:id', async(req, res) => {
 
-    const _id = req.params.id
+    const userId = req.params.id
+    const {name,description} = req.body
+    console.log(req.body)
+    console.log(req.files)
+    console.log(req.files.image)
 
-    const shop = await Shop.findByIdAndUpdate(_id, req.body, {
-        new: true
-    });
 
-    res.json({
+
+    const shop = await Shop.findOneAndUpdate({ userId : userId},{ name : name,description:description})
+
+    res.json(shop)({
         msg: "Update info of shop success",
         result: shop
     })
