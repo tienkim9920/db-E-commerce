@@ -203,20 +203,21 @@ router.get('/list/sale', async(req, res) => {
 
 // POST Product
 router.post('/', async(req, res) => {
-
-    const product = await Product.create(req.body, function(err, result) {
-        if (err) {
-            res.json({
-                msg: "0",
-                err
-            })
-        } else {
-            res.json({
-                msg: "1",
-                result
-            })
-        }
-    });
+    console.log(req.files)
+    console.log(req.body)
+        // const product = await Product.create(req.body, function(err, result) {
+        //     if (err) {
+        //         res.json({
+        //             msg: "0",
+        //             err
+        //         })
+        //     } else {
+        //         res.json({
+        //             msg: "1",
+        //             result
+        //         })
+        //     }
+        // });
 
 })
 
