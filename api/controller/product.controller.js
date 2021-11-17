@@ -30,9 +30,28 @@ router.get('/listProduct/:shopId', async(req, res) => {
 
     const { shopId } = req.params
 
-    const product = await Product.find({ shopId });
+    const { search, page } = req.query || ""
 
-    res.json(product)
+    const limit = 4
+
+    // list sản phẩm
+    const product = await Product.find({ 
+        "name": {
+            $regex: '.*' + search + '.*'
+        }, shopId
+    }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
+
+    // lấy tổng số lượng sản phẩm
+    const pagination = await Product.find({ 
+        "name": {
+            $regex: '.*' + search + '.*'
+        }, shopId
+    }).count()
+
+    res.json({
+        result: product,
+        pagination: Math.ceil(parseInt(pagination) / parseInt(limit))
+    })
 
 })
 
@@ -185,22 +204,71 @@ router.get('/category/:id', async(req, res) => {
 })
 
 // GET List product out of stock
-router.get('/list/outsale', async(req, res) => {
+router.get('/list/outsale/:shopId', async(req, res) => {
 
-    // Lấy tất cả count of product = 1
-    const productOutSale = await Product.find({ count: { $eq: 0 } });
+    const { shopId } = req.params
 
-    res.json(productOutSale)
+    const { search, page } = req.query || ""
+
+    const limit = 4
+
+    // list sản phẩm
+    const product = await Product.find({ 
+        "name": {
+            $regex: '.*' + search + '.*'
+        }, 
+        shopId,
+        stock: Boolean(false)
+    }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
+
+    // lấy tổng số lượng sản phẩm
+    const pagination = await Product.find({ 
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId,
+        stock: Boolean(false)
+    }).count()
+
+    res.json({
+        result: product,
+        pagination: Math.ceil(parseInt(pagination) / parseInt(limit))
+    })
 
 })
 
 // GET List product on-sale
-router.get('/list/onsale', async(req, res) => {
+router.get('/list/onsale/:shopId', async(req, res) => {
 
-    // Lấy tất cả count of product lớn hơn 1
-    const productOnSale = await Product.find({ count: { $gte: 1 } });
+    const { shopId } = req.params
 
-    res.json(productOnSale)
+    const { search, page } = req.query || ""
+
+    const limit = 4
+
+    // list sản phẩm
+    const product = await Product.find({ 
+        "name": {
+            $regex: '.*' + search + '.*'
+        }, 
+        shopId,
+        discount: { $gte: 1 }
+    }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
+
+    // lấy tổng số lượng sản phẩm
+    const pagination = await Product.find({ 
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId,
+        discount: { $gte: 1 }
+    }).count()
+
+    res.json({
+        result: product,
+        pagination: Math.ceil(parseInt(pagination) / parseInt(limit))
+    })
+
 })
 
 // GET List product sale 
@@ -392,6 +460,22 @@ router.patch('/update/image', async(req, res) => {
     } else {
         res.json({ msg: "Fail" })
     }
+
+})
+
+// Checking status Stock Product
+
+
+// PATCH status === false Stock
+router.get('/status/stock/:productId', async (req, res) => {
+
+    const { productId } = req.params
+
+    const product = await Product.findOne({ productId })
+
+    product.stock = false
+
+    product.save()
 
 })
 
