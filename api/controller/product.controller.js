@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 
 const Product = require('../model/product.model')
+const Option = require('../model/option.model')
 
 // GET Product all
 router.get('/', async(req, res) => {
@@ -463,8 +464,21 @@ router.patch('/update/image', async(req, res) => {
 
 })
 
-// Checking status Stock Product
+// Checking status Stock Product => true = hết hàng || false = còn hàng
+router.get('/option/stock/:productId', async (req, res) => {
 
+    const { productId } = req.params
+
+    const option = await Option.find({ productId })
+
+    // Kiểm tra điều kiện
+    const checking = option.every(element => {
+        return element.count === 0
+    })
+
+    res.json(checking)
+
+})
 
 // PATCH status === false Stock
 router.get('/status/stock/:productId', async (req, res) => {
