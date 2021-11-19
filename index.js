@@ -99,6 +99,8 @@ app.get('/phuong', async (req, res) => {
     res.json(data)
 })
 
+let userOnline = []
+
 io.on('connection', async (socket) => {
     console.log('a user connected', socket.id);
 
@@ -126,6 +128,46 @@ io.on('connection', async (socket) => {
     socket.on('typing', data => {
         socket.to(data.roomId).emit('typing', data)
     })
+
+    // connect application
+    socket.on('connectApplication', (session) => {
+        let flag = false
+
+        userOnline.forEach(value => {
+            if (value._id.includes(session)){
+                flag = true
+            }
+        })
+
+        if (flag){
+            return
+        }
+
+        // Khi thêm vào nó sẽ tạo expiredTime vòng đời cho userId
+        const data = {
+            _id: session,
+            expiredTime: Date.now() + 600000
+        }
+
+        userOnline.push(data)
+        console.log(userOnline)
+    })
+
+    // getOnline list user online
+    socket.on('getOnline', () => {
+        socket.emit('getOnline', userOnline)
+    })
+
+    // expiredTime for userOnline
+    setInterval(() => {
+        
+        const newClient = userOnline.filter(value => {
+            return parseInt(value.expiredTime) > parseInt(Date.now())
+        })
+
+        userOnline = newClient
+
+    }, 90000)
 });
   
 server.listen(PORT, () => {
