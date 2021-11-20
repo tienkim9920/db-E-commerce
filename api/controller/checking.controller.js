@@ -76,8 +76,8 @@ router.patch('/:id', async (req, res) => {
 
 })
 
-// PATCH Checking
-router.patch('/checking/:id', async (req, res) => {
+// GET change notice Checking
+router.get('/checking/:id', async (req, res) => {
 
     const { id } = req.params
 

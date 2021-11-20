@@ -230,4 +230,46 @@ router.delete('/:id', async(req, res) => {
 
 })
 
+// GET Statistic
+router.get('/statistic/:shopId', async (req, res) => {
+
+    const { shopId } = req.params
+
+    const { checking, getDay, getMonth, getYear } = req.query
+
+
+    if (parseInt(checking) === 1){
+
+        const createTime = `${getDay}/${getMonth}/${getYear}`
+
+        const statistic = await Order.find({ createTime, shopId, status: '4' }).populate(['userId', 'payId'])
+
+        res.json(statistic)
+    }else if (parseInt(checking) === 2){
+
+        const createTime = `/${getMonth}/${getYear}`
+
+        const statistic = await Order.find({
+            "createTime": {
+                $regex: '.*' + createTime + '.*'
+            },
+            shopId, status: '4'
+        }).populate(['userId', 'payId'])
+
+        res.json(statistic)
+    }else {
+        const createTime = `/${getYear}`
+
+        const statistic = await Order.find({
+            "createTime": {
+                $regex: '.*' + createTime + '.*'
+            },
+            shopId, status: '4'
+        }).populate(['userId', 'payId'])
+
+        res.json(statistic)
+    }
+
+})
+
 module.exports = router

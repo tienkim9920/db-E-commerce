@@ -58,12 +58,11 @@ router.patch('/:id', async (req,res) =>{
     const addressSite = await Address.findByIdAndUpdate(_id,body)
 
     
-    res.json(addressSite)({
+    res.json({
         msg: "Update address shop success",
         addressSite
     })
     
-   
 })
 
 
