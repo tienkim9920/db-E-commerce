@@ -1,7 +1,7 @@
-const { query } = require('express');
 const express = require('express')
 
 const router = express.Router()
+const mongoose = require('mongoose');
 
 const Product = require('../model/product.model')
 const Option = require('../model/option.model')
@@ -36,17 +36,19 @@ router.get('/listProduct/:shopId', async(req, res) => {
     const limit = 4
 
     // list sản phẩm
-    const product = await Product.find({ 
+    const product = await Product.find({
         "name": {
             $regex: '.*' + search + '.*'
-        }, shopId
+        },
+        shopId
     }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
 
     // lấy tổng số lượng sản phẩm
-    const pagination = await Product.find({ 
+    const pagination = await Product.find({
         "name": {
             $regex: '.*' + search + '.*'
-        }, shopId
+        },
+        shopId
     }).count()
 
     res.json({
@@ -214,16 +216,16 @@ router.get('/list/outsale/:shopId', async(req, res) => {
     const limit = 4
 
     // list sản phẩm
-    const product = await Product.find({ 
+    const product = await Product.find({
         "name": {
             $regex: '.*' + search + '.*'
-        }, 
+        },
         shopId,
         stock: Boolean(false)
     }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
 
     // lấy tổng số lượng sản phẩm
-    const pagination = await Product.find({ 
+    const pagination = await Product.find({
         "name": {
             $regex: '.*' + search + '.*'
         },
@@ -248,16 +250,16 @@ router.get('/list/onsale/:shopId', async(req, res) => {
     const limit = 4
 
     // list sản phẩm
-    const product = await Product.find({ 
+    const product = await Product.find({
         "name": {
             $regex: '.*' + search + '.*'
-        }, 
+        },
         shopId,
         discount: { $gte: 1 }
     }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
 
     // lấy tổng số lượng sản phẩm
-    const pagination = await Product.find({ 
+    const pagination = await Product.find({
         "name": {
             $regex: '.*' + search + '.*'
         },
@@ -282,35 +284,11 @@ router.get('/list/sale', async(req, res) => {
 })
 
 // POST Product
-router.post('/', async(req, res) => {
+router.post('/', checkProduct, upLoadImage, addProduct, addOptions)
 
-    const product = await Product.create(req.body)
-
-    res.json({
-        msg: "Code 200",
-        product
-    })
-
-})
 
 // Update Product
-router.patch('/:id', async(req, res) => {
-
-    const id = req.params.id;
-    
-    Product.updateOne({ _id: id }, req.body, function(err, result) {
-        if (err) {
-            return res.json({
-                msg: 'That bai',
-                err: err
-            });
-        }
-        return res.json({
-            msg: 'Thanh cong',
-            product: result
-        });
-    })
-})
+router.patch('/:id', checkProduct, upLoadImage, updateOption, updateProduct)
 
 // Update Product like
 router.get('/like/:id', async(req, res) => {
@@ -341,7 +319,7 @@ router.get('/dislike/:id', async(req, res) => {
 })
 
 // Update Product count comment
-router.get('/comment/:id', async (req, res) => {
+router.get('/comment/:id', async(req, res) => {
 
     const _id = req.params.id
 
@@ -464,34 +442,97 @@ router.patch('/update/image', async(req, res) => {
 
 })
 
-// Checking status Stock Product => true = hết hàng || false = còn hàng
-router.get('/option/stock/:productId', async (req, res) => {
+async function checkProduct(req, res, next) {
+    const id = req.params.id
 
-    const { productId } = req.params
+    const product = await Product.findOne({
+        name: req.body.name.toUpperCase(),
+        shopId: req.body.shopId
+    });
 
-    const option = await Option.find({ productId })
+    if ((id && product && product._id != id) || (!id && product)) {
+        return res.json({ msg: 'Sản phẩm đã tồn tại' })
+    }
+    next()
 
-    // Kiểm tra điều kiện
-    const checking = option.every(element => {
-        return element.count === 0
+}
+
+function upLoadImage(req, res, next) {
+    if (!req.files) {
+        next()
+    } else {
+        req.files.file.forEach((item) => {
+            const fileName = item.name
+
+            item.mv('./public/image/product/' + fileName)
+
+        });
+
+        next()
+    }
+}
+
+async function addProduct(req, res, next) {
+    req.body.image = req.body.fileName ? req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : []
+    req.body.name = req.body.name.toUpperCase()
+    const product = await Product.create(req.body)
+    req.productId = product._id
+    next()
+}
+
+function addOptions(req, res) {
+    let option = JSON.parse(req.body.option).map(e => {
+        return {
+            ...e,
+            productId: req.productId
+        }
     })
 
-    res.json(checking)
+    Option.insertMany(option, (error, result) => {
+        if (error) {
+            return res.json({ msg: error });
+        }
+        return res.json({ msg: 'Bạn đã thêm thành công' })
 
-})
+    });
+}
 
-// PATCH status === false Stock
-router.get('/status/stock/:productId', async (req, res) => {
+async function updateOption(req, res, next) {
+    const option = JSON.parse(req.body.option) || []
 
-    const { productId } = req.params
+    const optionId = option.filter(data => {
+            if (data._id)
+                return data;
+        })
+        .map(e => {
+            return mongoose.Types.ObjectId(e._id)
+        })
+    await Option.deleteMany({ _id: { $nin: optionId } })
 
-    const product = await Product.findOne({ productId })
+    await option.map(async e => {
+        if (e._id) {
+            await Option.updateOne({ _id: e._id }, e)
+        } else if (!e._id) {
+            await Option.create(e)
+        }
+    })
+    next()
+}
 
-    product.stock = false
+async function updateProduct(req, res) {
+    const filename = req.body.fileName || []
 
-    product.save()
+    req.body.image = filename.map((item) => {
+        if (!item.startsWith("http://localhost:4000/image/product")) {
+            return "http://localhost:4000/image/product/" + item
+        }
+        return item
+    })
+    await Product.updateOne({ _id: req.params.id }, req.body)
 
-})
+    return res.json({ msg: 'Bạn đã thêm thành công' })
+}
+
 
 
 module.exports = router

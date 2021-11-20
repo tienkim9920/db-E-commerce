@@ -31,9 +31,112 @@ router.get('/:id', async(req, res) => {
 // GET Order UserId
 router.get('/user/:userId', async(req, res) => {
     const { userId } = req.params
-    const order = await Order.find({ userId: userId }).populate(['payId', 'shopId'])
+
+    const order = await Order.find({ userId: userId }).populate(['payId', 'shopId', 'noteId'])
 
     res.json(order)
+
+})
+
+// GET Order ShopId
+router.get('/shop/:userId', async(req, res) => {
+    const { userId } = req.params
+
+    const page = req.query.page || 1
+    const pageSize = req.query.pageSize || 8
+    const status = req.query.status || "1"
+    const start = (page - 1) * pageSize;
+    const end = page * pageSize;
+
+    let query = {}
+    query.userId = { 'shopId.userId': userId };
+    query.status = status !== "0" ? { 'status': status } : {}
+
+    const order = await Order.aggregate([
+
+        {
+            $addFields: {
+                shopId: { $toObjectId: "$shopId" },
+                payId: { $toObjectId: "$payId" },
+                noteId: { $toObjectId: "$noteId" },
+                userId: { $toObjectId: "$userId" }
+            }
+        },
+
+        {
+            $lookup: {
+                from: 'shop',
+                localField: "shopId",
+                foreignField: "_id",
+                as: 'shopId'
+            }
+        },
+
+        {
+            $lookup: {
+                from: 'pay',
+                localField: "payId",
+                foreignField: "_id",
+                as: 'payId'
+            }
+        },
+
+        {
+            $lookup: {
+                from: 'note',
+                localField: "noteId",
+                foreignField: "_id",
+                as: 'noteId'
+            }
+        },
+
+        {
+            $lookup: {
+                from: 'user',
+                localField: "userId",
+                foreignField: "_id",
+                as: 'userId'
+            }
+        },
+
+        {
+            $unwind: {
+                path: "$shopId",
+                preserveNullAndEmptyArrays: true
+            }
+
+        },
+        {
+            $unwind: {
+                path: "$payId",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $unwind: {
+                path: "$noteId",
+                preserveNullAndEmptyArrays: true
+            }
+
+        },
+        {
+            $unwind: {
+                path: "$userId",
+                preserveNullAndEmptyArrays: true
+            }
+
+        },
+
+        {
+            $match: { $and: [query.userId, query.status] }
+        }
+
+
+    ])
+
+    // const order = await Order.find({ userId: userId }).populate(['payId', 'shopId', 'noteId'])
+
+    res.json({ order: order.slice(start, end), total: order.length })
 
 })
 
@@ -68,19 +171,49 @@ router.post('/', async(req, res) => {
 // Update Status order
 
 router.patch('/:id', async(req, res) => {
-
     const _id = req.params.id
-    const status = req.body.status
+    const status = req.query.status || "4"
+    const option = req.query.option || "true"
 
-    const order = await Order.findByIdAndUpdate(_id, { status: status }, {
-        new: true
+    if (status >= 4) {
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
+    }
+
+    if (option !== "true") {
+        const order = await Order.findByIdAndUpdate(_id, {
+            status: "5",
+            pay: false
+        });
+
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
+    }
+
+    if (status === "3") {
+        const order = await Order.findByIdAndUpdate(_id, {
+            status: Number(status) + 1,
+            pay: false
+        });
+
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
+    }
+
+    const order = await Order.findByIdAndUpdate(_id, {
+        status: Number(status) + 1
     });
 
     res.json({
         msg: "Transfer status success",
         order
     })
-
 })
 
 // DELETE order

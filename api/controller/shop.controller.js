@@ -7,9 +7,9 @@ const Product = require('../model/product.model')
 
 // GET shop all
 router.get('/', async(req, res) => {
+    const limit = Number(req.query.limit) || ""
 
-    const shop =
-        await Shop.find({})
+    const shop = await Shop.find({}).limit(limit)
 
     res.json(shop)
 
@@ -29,6 +29,7 @@ router.get('/:id', async(req, res) => {
 // GET Shop Category
 router.get('/category/:id', async(req, res) => {
     const id = req.params.id
+    const limit = Number(req.query.limit) || 5
 
     const search = req.query.keyWord || ""
     let query = {}
@@ -43,20 +44,25 @@ router.get('/category/:id', async(req, res) => {
                 from: 'shop',
                 localField: "_id",
                 foreignField: "_id",
-                as: 'shop'
+                as: 'shopId'
             }
         },
         {
-            $unwind: "$shop"
+            $unwind: "$shopId"
         },
         {
             $project: {
                 _id: 0,
-                shop: 1
+                shopId: 1
             }
         },
-        { $group: { _id: "$shop._id", name: { "$first": "$shop.name" } } }
-    ])
+        { $group: { _id: "$shopId._id", name: { "$first": "$shopId.name" }, reply: { "$first": "$shopId.reply" } } },
+        { $sort: { "reply": -1 } },
+
+
+
+
+    ]).limit(limit)
 
 
     res.json(shop)
@@ -91,14 +97,14 @@ router.post('/', async(req, res) => {
 router.patch('/:id', async(req, res) => {
 
     const userId = req.params.id
-    const {name,description} = req.body
+    const { name, description } = req.body
     console.log(req.body)
     console.log(req.files)
     console.log(req.files.image)
 
 
 
-    const shop = await Shop.findOneAndUpdate({ userId : userId},{ name : name,description:description})
+    const shop = await Shop.findOneAndUpdate({ userId: userId }, { name: name, description: description })
 
     res.json(shop)({
         msg: "Update info of shop success",
