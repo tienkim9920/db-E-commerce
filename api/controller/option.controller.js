@@ -5,17 +5,17 @@ const router = express.Router()
 const Option = require('../model/option.model')
 
 // GET Option all
-router.get('/', async (req, res) => {
-    
+router.get('/', async(req, res) => {
+
     const option = await Option.find({});
-    
+
     res.json(option)
 
 })
 
 // GET Option by productId
-router.get('/:productId', async (req, res) => {
- 
+router.get('/:productId', async(req, res) => {
+
     const { productId } = req.params
 
     const option = await Option.find({ productId })
@@ -25,17 +25,17 @@ router.get('/:productId', async (req, res) => {
 })
 
 // POST Option
-router.post('/', async (req, res) => {
-    
-    Option.create(req.body, function(err, result){
-        if(err) {
+router.post('/', async(req, res) => {
+
+    Option.create(req.body, function(err, result) {
+        if (err) {
             res.json({
-                msg:"0",
+                msg: "0",
                 err
             })
-        }else{
+        } else {
             res.json({
-                msg:"1",
+                msg: "1",
                 result
             })
         }
@@ -44,8 +44,8 @@ router.post('/', async (req, res) => {
 })
 
 // DELETE Option
-router.delete('/:id', async (req, res) => {
-    
+router.delete('/:id', async(req, res) => {
+
     const id = req.params.id
 
     Option.deleteOne({ _id: id }, function(err, result) {
@@ -63,6 +63,24 @@ router.delete('/:id', async (req, res) => {
     })
 
 })
+
+// Update Option
+router.patch('/:id', async(req, res) => {
+
+    const _id = req.params.id
+
+    const option = await Option.findByIdAndUpdate(_id, req.body, {
+        new: true
+    });
+
+    res.json({
+        msg: "Update info of option success",
+        result: option
+    })
+
+})
+
+
 
 
 module.exports = router

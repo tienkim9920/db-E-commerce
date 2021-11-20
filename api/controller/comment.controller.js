@@ -16,7 +16,7 @@ router.get('/', async(req, res) => {
 // GET Comment Product
 router.get('/:productId', async(req, res) => {
 
-    const comment = await Comment.find({ productId: req.params.productId });
+    const comment = await Comment.find({ productId: req.params.productId }).populate('userId');
 
     res.json(comment)
 
@@ -25,16 +25,19 @@ router.get('/:productId', async(req, res) => {
 // POST Comment
 router.post('/', async(req, res) => {
 
-    Comment.create(req.body, function(err, result) {
+    Comment.create(req.body, async function(err, result) {
         if (err) {
             res.json({
                 msg: "Code 404",
                 err
             })
         } else {
+
+            const comment = await Comment.findOne({ _id: result._id }).populate('userId')
+
             res.json({
                 msg: "Code 200",
-                result
+                result: comment
             })
         }
     });

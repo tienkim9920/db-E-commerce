@@ -29,7 +29,7 @@ router.get('/detailAddress/:id', async (req, res) =>{
 
     const { id } = req.params
 
-    const address = await Address.findOne({ id });
+    const address = await Address.findOne({ _id: id });
 
     res.json(address)
 })
@@ -48,25 +48,22 @@ router.post('/', async(req, res) => {
 
 // Update address of shop 
 
-router.patch('/address/:id', async (req,res) =>{
+router.patch('/:id', async (req,res) =>{
+    console.log(req.body)
 
-    try{
+    const _id = req.params.id
+    const body = req.body
+    console.log(_id)
 
-        const _id = req.params.id
-        const address = req.body.address
+    const addressSite = await Address.findByIdAndUpdate(_id,body)
 
-        const addressSite = await Address.findByIdAndUpdate(_id,{address: address},{
-            new:true
-        });
-        
-        res.json(addressSite)({
-            msg: "Update address shop success",
-            addressSite
-        })
     
-    }catch(e){
-        res.status(400).send(e);
-    }
+    res.json(addressSite)({
+        msg: "Update address shop success",
+        addressSite
+    })
+    
+   
 })
 
 
@@ -74,7 +71,7 @@ router.patch('/address/:id', async (req,res) =>{
 router.delete('/:id', async(req, res) => {
 
     const id = req.params.id
-    console.log(id)
+
     const address = await Address.deleteOne({ _id: id })
 
     res.json({

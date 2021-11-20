@@ -1,9 +1,10 @@
-const { query } = require('express');
 const express = require('express')
 
 const router = express.Router()
+const mongoose = require('mongoose');
 
 const Product = require('../model/product.model')
+const Option = require('../model/option.model')
 
 // GET Product all
 router.get('/', async(req, res) => {
@@ -20,6 +21,17 @@ router.get('/:id', async(req, res) => {
     const id = req.params.id
 
     const product = await Product.findOne({ _id: id }).populate('shopId')
+
+    res.json(product)
+
+})
+
+// Get detail product by shopId
+router.get('/listProduct/:shopId', async(req, res) => {
+
+    const { shopId } = req.params
+
+    const product = await Product.find({ shopId });
 
     res.json(product)
 
@@ -202,46 +214,14 @@ router.get('/list/sale', async(req, res) => {
 })
 
 // POST Product
-router.post('/', async(req, res) => {
-    console.log(req.files)
-    console.log(req.body)
-        // const product = await Product.create(req.body, function(err, result) {
-        //     if (err) {
-        //         res.json({
-        //             msg: "0",
-        //             err
-        //         })
-        //     } else {
-        //         res.json({
-        //             msg: "1",
-        //             result
-        //         })
-        //     }
-        // });
+router.post('/', checkProduct, upLoadImage, addProduct, addOptions)
 
-})
 
 // Update Product
-router.patch('/:id', async(req, res) => {
-
-    const id = req.params.id;
-
-    Product.updateOne({ _id: id }, req.body, function(err, result) {
-        if (err) {
-            return res.json({
-                msg: 'That bai',
-                err: err
-            });
-        }
-        return res.json({
-            msg: 'Thanh cong',
-            product: result
-        });
-    })
-})
+router.patch('/:id', checkProduct, upLoadImage, updateOption, updateProduct)
 
 // Update Product like
-router.patch('/like/:id', async(req, res) => {
+router.get('/like/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -255,7 +235,7 @@ router.patch('/like/:id', async(req, res) => {
 })
 
 // Update Product dislike
-router.patch('/dislike/:id', async(req, res) => {
+router.get('/dislike/:id', async(req, res) => {
 
     const id = req.params.id;
 
@@ -266,6 +246,21 @@ router.patch('/dislike/:id', async(req, res) => {
     product.save()
 
     res.json("Thanh Cong")
+})
+
+// Update Product count comment
+router.get('/comment/:id', async(req, res) => {
+
+    const _id = req.params.id
+
+    const product = await Product.findOne({ _id })
+
+    product.comment = Number(product.comment) + 1
+
+    product.save()
+
+    res.json("Thanh Cong")
+
 })
 
 // DELETE Product
@@ -298,7 +293,7 @@ router.get('/shop/pagination', async(req, res) => {
     const { page, shopId } = req.query
 
     // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
-    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 8).limit(8)
+    const products = await Product.find({ shopId: shopId }).skip((page - 1) * 4).limit(4)
 
     res.json(products)
 
@@ -316,8 +311,20 @@ router.get('/home/pagination', async(req, res) => {
 
 })
 
+//GET All Newfeed Product Pagination
+router.get('/newfeed/pagination', async(req, res) => {
+
+    const { page } = req.query
+
+    // Lọc theo trang. skip là bắt đầu từ vị trí sản phẩm
+    const products = await Product.find({}).skip((page - 1) * 3).limit(3).populate('shopId')
+
+    res.json(products)
+
+})
+
 // Search All Product by Name
-router.get('/search', async(req, res) => {
+router.get('/search/word', async(req, res) => {
 
     const { word } = req.query
 
@@ -364,6 +371,98 @@ router.patch('/update/image', async(req, res) => {
     }
 
 })
+
+async function checkProduct(req, res, next) {
+    const id = req.params.id
+
+    const product = await Product.findOne({
+        name: req.body.name.toUpperCase(),
+        shopId: req.body.shopId
+    });
+
+    if ((id && product && product._id != id) || (!id && product)) {
+        return res.json({ msg: 'Sản phẩm đã tồn tại' })
+    }
+    next()
+
+}
+
+function upLoadImage(req, res, next) {
+    if (!req.files) {
+        next()
+    } else {
+        req.files.file.forEach((item) => {
+            const fileName = item.name
+
+            item.mv('./public/image/product/' + fileName)
+
+        });
+
+        next()
+    }
+}
+
+async function addProduct(req, res, next) {
+    req.body.image = req.body.fileName ? req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : []
+    req.body.name = req.body.name.toUpperCase()
+    const product = await Product.create(req.body)
+    req.productId = product._id
+    next()
+}
+
+function addOptions(req, res) {
+    let option = JSON.parse(req.body.option).map(e => {
+        return {
+            ...e,
+            productId: req.productId
+        }
+    })
+
+    Option.insertMany(option, (error, result) => {
+        if (error) {
+            return res.json({ msg: error });
+        }
+        return res.json({ msg: 'Bạn đã thêm thành công' })
+
+    });
+}
+
+async function updateOption(req, res, next) {
+    const option = JSON.parse(req.body.option) || []
+
+    const optionId = option.filter(data => {
+            if (data._id)
+                return data;
+        })
+        .map(e => {
+            return mongoose.Types.ObjectId(e._id)
+        })
+    await Option.deleteMany({ _id: { $nin: optionId } })
+
+    await option.map(async e => {
+        if (e._id) {
+            await Option.updateOne({ _id: e._id }, e)
+        } else if (!e._id) {
+            await Option.create(e)
+        }
+    })
+    next()
+}
+
+async function updateProduct(req, res) {
+    const filename = req.body.fileName || []
+
+    req.body.image = filename.map((item) => {
+        if (!item.startsWith("http://localhost:4000/image/product")) {
+            return "http://localhost:4000/image/product/" + item
+        }
+        return item
+    })
+    await Product.updateOne({ _id: req.params.id }, req.body)
+
+    return res.json({ msg: 'Bạn đã thêm thành công' })
+}
+
 
 
 module.exports = router

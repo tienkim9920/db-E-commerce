@@ -171,19 +171,49 @@ router.post('/', async(req, res) => {
 // Update Status order
 
 router.patch('/:id', async(req, res) => {
-
     const _id = req.params.id
-    const status = req.body.status
+    const status = req.query.status || "4"
+    const option = req.query.option || "true"
 
-    const order = await Order.findByIdAndUpdate(_id, { status: status }, {
-        new: true
+    if (status >= 4) {
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
+    }
+
+    if (option !== "true") {
+        const order = await Order.findByIdAndUpdate(_id, {
+            status: "5",
+            pay: false
+        });
+
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
+    }
+
+    if (status === "3") {
+        const order = await Order.findByIdAndUpdate(_id, {
+            status: Number(status) + 1,
+            pay: false
+        });
+
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
+    }
+
+    const order = await Order.findByIdAndUpdate(_id, {
+        status: Number(status) + 1
     });
 
     res.json({
         msg: "Transfer status success",
         order
     })
-
 })
 
 // DELETE order
