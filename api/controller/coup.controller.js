@@ -48,7 +48,7 @@ router.patch('/:id', async (req,res) =>{
 
     
     res.json({
-        msg: "Update coup of shop success",
+        msg: "Update coup of shop success push",
         coupPatch
     })
     
