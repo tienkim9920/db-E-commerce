@@ -49,16 +49,14 @@ router.post('/', async(req, res) => {
 // Update address of shop 
 
 router.patch('/:id', async (req,res) =>{
-    console.log(req.body)
 
     const _id = req.params.id
     const body = req.body
-    console.log(_id)
 
     const addressSite = await Address.findByIdAndUpdate(_id,body)
 
     
-    res.json(addressSite)({
+    res.json({
         msg: "Update address shop success",
         addressSite
     })

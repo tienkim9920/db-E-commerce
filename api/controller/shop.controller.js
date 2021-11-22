@@ -91,14 +91,25 @@ router.post('/', async(req, res) => {
 router.patch('/:id', async(req, res) => {
 
     const userId = req.params.id
+
     const {name,description} = req.body
-    console.log(req.body)
-    console.log(req.files)
-    console.log(req.files.image)
 
+    let fileShop= req.body.file || ""
 
+    if(req.files){
 
-    const shop = await Shop.findOneAndUpdate({ userId : userId},{ name : name,description:description})
+        var fileImage = req.files.file;
+
+        var fileName = fileImage.name
+    
+        fileShop = "http://localhost:4000/" + fileName
+    
+        // move file name in folder public
+        fileImage.mv('./public/' + fileName)
+    }
+ 
+
+    const shop = await Shop.findOneAndUpdate({ userId : userId},{ name : name,description:description, image: fileShop})
 
     res.json(shop)({
         msg: "Update info of shop success",
