@@ -534,20 +534,20 @@ async function updateOption(req, res, next) {
 
 async function updateProduct(req, res) {
     const filename = req.body.fileName || []
-        // if (Array.isArray(filename)) {
-        //     req.body.image = filename.map((item) => {
-        //         if (!item.startsWith("http://localhost:4000/image/product")) {
-        //             return "http://localhost:4000/image/product/" + item
-        //         }
-        //         return item
-        //     })
-        // } else {
-        //     if (!filename.startsWith("http://localhost:4000/image/product")) {
-        //         req.body.image = "http://localhost:4000/image/product/" + filename
-        //     } else {
-        //         req.body.image = filename
-        //     }
-        // }
+    if (Array.isArray(filename)) {
+        req.body.image = filename.map((item) => {
+            if (!item.startsWith("http://localhost:4000/image/product")) {
+                return "http://localhost:4000/image/product/" + item
+            }
+            return item
+        })
+    } else {
+        if (!filename.startsWith("http://localhost:4000/image/product")) {
+            req.body.image = "http://localhost:4000/image/product/" + filename
+        } else {
+            req.body.image = filename
+        }
+    }
 
     await Product.updateOne({ _id: req.params.id }, req.body)
 
