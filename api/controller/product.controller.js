@@ -512,6 +512,7 @@ function addOptions(req, res) {
 async function updateOption(req, res, next) {
     const option = JSON.parse(req.body.option) || []
 
+
     const optionId = option.filter(data => {
             if (data._id)
                 return data;
@@ -519,7 +520,7 @@ async function updateOption(req, res, next) {
         .map(e => {
             return mongoose.Types.ObjectId(e._id)
         })
-    await Option.deleteMany({ _id: { $nin: optionId } })
+    await Option.deleteMany({ $and: [{ _id: { $nin: optionId } }, { productId: req.params.id }] })
 
     await option.map(async e => {
         if (e._id) {
@@ -533,20 +534,20 @@ async function updateOption(req, res, next) {
 
 async function updateProduct(req, res) {
     const filename = req.body.fileName || []
-    if (Array.isArray(fileName)) {
-        req.body.image = filename.map((item) => {
-            if (!item.startsWith("http://localhost:4000/image/product")) {
-                return "http://localhost:4000/image/product/" + item
-            }
-            return item
-        })
-    } else {
-        if (!filename.startsWith("http://localhost:4000/image/product")) {
-            req.body.image = "http://localhost:4000/image/product/" + filename
-        } else {
-            req.body.image = filename
-        }
-    }
+        // if (Array.isArray(filename)) {
+        //     req.body.image = filename.map((item) => {
+        //         if (!item.startsWith("http://localhost:4000/image/product")) {
+        //             return "http://localhost:4000/image/product/" + item
+        //         }
+        //         return item
+        //     })
+        // } else {
+        //     if (!filename.startsWith("http://localhost:4000/image/product")) {
+        //         req.body.image = "http://localhost:4000/image/product/" + filename
+        //     } else {
+        //         req.body.image = filename
+        //     }
+        // }
 
     await Product.updateOne({ _id: req.params.id }, req.body)
 
