@@ -14,9 +14,9 @@ router.get('/', async(req, res) => {
 })
 
 // GET all coup of shop by shopId
-router.get('/coup', async (req, res) => {
+router.get('/detail/:shopId', async (req, res) => {
     
-    const shopId = req.query.shopId
+    const { shopId } = req.params
 
     const coup = await Coup.find({ shopId });
     
@@ -27,39 +27,45 @@ router.get('/coup', async (req, res) => {
 // POST Coup
 router.post('/', async(req, res) => {
 
-    Coup.create(req.body, function(err, result) {
-        if (err) {
-            res.json({
-                msg: "Code 404",
-                err
-            })
-        } else {
-            res.json({
-                msg: "Code 200",
-                result
-            })
-        }
-    });
+
+    const coup = await Coup.create(req.body)
+
+    res.json({
+        msg: "Code 200",
+        coup
+    })
 
 })
+
+// Update coup of shop 
+
+router.patch('/:id', async (req,res) =>{
+
+    const _id = req.params.id
+    const body = req.body
+
+    const coupPatch = await Coup.findByIdAndUpdate(_id,body)
+
+    
+    res.json({
+        msg: "Update coup of shop success",
+        coupPatch
+    })
+    
+   
+})
+
 
 // DELETE Coup
 router.delete('/:id', async(req, res) => {
 
     const id = req.params.id
 
-    Coup.deleteOne({ _id: id }, function(err, result) {
-        if (err) {
-            res.json({
-                msg: "Code 404",
-                err
-            })
-        } else {
-            res.json({
-                msg: "Code 200",
-                result
-            })
-        }
+    const coup = await Coup.deleteOne({ _id: id})
+
+    res.json({
+        msg: "Code 200",
+        coup
     })
 
 })
