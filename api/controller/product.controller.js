@@ -1,9 +1,10 @@
-const { query } = require('express');
 const express = require('express')
 
 const router = express.Router()
+const mongoose = require('mongoose');
 
 const Product = require('../model/product.model')
+const Option = require('../model/option.model')
 
 // GET Product all
 router.get('/', async(req, res) => {
@@ -30,9 +31,30 @@ router.get('/listProduct/:shopId', async(req, res) => {
 
     const { shopId } = req.params
 
-    const product = await Product.find({ shopId });
+    const { search, page } = req.query || ""
 
-    res.json(product)
+    const limit = 4
+
+    // list sản phẩm
+    const product = await Product.find({
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId
+    }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
+
+    // lấy tổng số lượng sản phẩm
+    const pagination = await Product.find({
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId
+    }).count()
+
+    res.json({
+        result: product,
+        pagination: Math.ceil(parseInt(pagination) / parseInt(limit))
+    })
 
 })
 
@@ -185,22 +207,71 @@ router.get('/category/:id', async(req, res) => {
 })
 
 // GET List product out of stock
-router.get('/list/outsale', async(req, res) => {
+router.get('/list/outsale/:shopId', async(req, res) => {
 
-    // Lấy tất cả count of product = 1
-    const productOutSale = await Product.find({ count: { $eq: 0 } });
+    const { shopId } = req.params
 
-    res.json(productOutSale)
+    const { search, page } = req.query || ""
+
+    const limit = 4
+
+    // list sản phẩm
+    const product = await Product.find({
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId,
+        stock: Boolean(false)
+    }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
+
+    // lấy tổng số lượng sản phẩm
+    const pagination = await Product.find({
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId,
+        stock: Boolean(false)
+    }).count()
+
+    res.json({
+        result: product,
+        pagination: Math.ceil(parseInt(pagination) / parseInt(limit))
+    })
 
 })
 
 // GET List product on-sale
-router.get('/list/onsale', async(req, res) => {
+router.get('/list/onsale/:shopId', async(req, res) => {
 
-    // Lấy tất cả count of product lớn hơn 1
-    const productOnSale = await Product.find({ count: { $gte: 1 } });
+    const { shopId } = req.params
 
-    res.json(productOnSale)
+    const { search, page } = req.query || ""
+
+    const limit = 4
+
+    // list sản phẩm
+    const product = await Product.find({
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId,
+        discount: { $gte: 1 }
+    }).skip((page - 1) * limit).limit(limit).populate(['categoryId']);
+
+    // lấy tổng số lượng sản phẩm
+    const pagination = await Product.find({
+        "name": {
+            $regex: '.*' + search + '.*'
+        },
+        shopId,
+        discount: { $gte: 1 }
+    }).count()
+
+    res.json({
+        result: product,
+        pagination: Math.ceil(parseInt(pagination) / parseInt(limit))
+    })
+
 })
 
 // GET List product sale 
@@ -213,35 +284,11 @@ router.get('/list/sale', async(req, res) => {
 })
 
 // POST Product
-router.post('/', async(req, res) => {
+router.post('/', checkProduct, upLoadImage, addProduct, addOptions)
 
-    const product = await Product.create(req.body)
-
-    res.json({
-        msg: "Code 200",
-        product
-    })
-
-})
 
 // Update Product
-router.patch('/:id', async(req, res) => {
-
-    const id = req.params.id;
-    
-    Product.updateOne({ _id: id }, req.body, function(err, result) {
-        if (err) {
-            return res.json({
-                msg: 'That bai',
-                err: err
-            });
-        }
-        return res.json({
-            msg: 'Thanh cong',
-            product: result
-        });
-    })
-})
+router.patch('/:id', checkProduct, upLoadImage, updateOption, updateProduct)
 
 // Update Product like
 router.get('/like/:id', async(req, res) => {
@@ -272,7 +319,7 @@ router.get('/dislike/:id', async(req, res) => {
 })
 
 // Update Product count comment
-router.get('/comment/:id', async (req, res) => {
+router.get('/comment/:id', async(req, res) => {
 
     const _id = req.params.id
 
@@ -394,6 +441,118 @@ router.patch('/update/image', async(req, res) => {
     }
 
 })
+
+async function checkProduct(req, res, next) {
+    const id = req.params.id
+
+    const product = await Product.findOne({
+        name: req.body.name.toUpperCase(),
+        shopId: req.body.shopId
+    });
+
+    if ((id && product && product._id != id) || (!id && product)) {
+        return res.json({ msg: 'Sản phẩm đã tồn tại' })
+    }
+    next()
+
+}
+
+function upLoadImage(req, res, next) {
+    if (!req.files) {
+        next()
+    } else {
+        if (Array.isArray(req.files.file))
+            req.files.file.forEach((item) => {
+                const fileName = item.name
+
+                item.mv('./public/image/product/' + fileName)
+
+            });
+        else {
+            const fileImage = req.files.file;
+
+            const fileName = fileImage.name
+
+            fileImage.mv('./public/image/product/' + fileName)
+        }
+
+        next()
+    }
+}
+
+async function addProduct(req, res, next) {
+    const fileName = req.body.fileName || []
+
+
+    Array.isArray(fileName) ? req.body.image = req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : req.body.image = "http://localhost:4000/image/product/" + fileName
+
+    req.body.name = req.body.name.toUpperCase()
+    const product = await Product.create(req.body)
+    req.productId = product._id
+    next()
+}
+
+function addOptions(req, res) {
+    let option = JSON.parse(req.body.option).map(e => {
+        return {
+            ...e,
+            productId: req.productId
+        }
+    })
+
+    Option.insertMany(option, (error, result) => {
+        if (error) {
+            return res.json({ msg: error });
+        }
+        return res.json({ msg: 'Bạn đã thêm thành công' })
+
+    });
+}
+
+async function updateOption(req, res, next) {
+    const option = JSON.parse(req.body.option) || []
+
+    const optionId = option.filter(data => {
+            if (data._id)
+                return data;
+        })
+        .map(e => {
+            return mongoose.Types.ObjectId(e._id)
+        })
+    await Option.deleteMany({ _id: { $nin: optionId } })
+
+    await option.map(async e => {
+        if (e._id) {
+            await Option.updateOne({ _id: e._id }, e)
+        } else if (!e._id) {
+            await Option.create(e)
+        }
+    })
+    next()
+}
+
+async function updateProduct(req, res) {
+    const filename = req.body.fileName || []
+    if (Array.isArray(fileName)) {
+        req.body.image = filename.map((item) => {
+            if (!item.startsWith("http://localhost:4000/image/product")) {
+                return "http://localhost:4000/image/product/" + item
+            }
+            return item
+        })
+    } else {
+        if (!filename.startsWith("http://localhost:4000/image/product")) {
+            req.body.image = "http://localhost:4000/image/product/" + filename
+        } else {
+            req.body.image = filename
+        }
+    }
+
+    await Product.updateOne({ _id: req.params.id }, req.body)
+
+    return res.json({ msg: 'Bạn đã thêm thành công' })
+}
+
 
 
 module.exports = router

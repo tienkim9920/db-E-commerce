@@ -44,7 +44,7 @@ router.get('/list/clientId/:id', async (req, res) => {
 
     const { id } = req.params
 
-    const rooms = await Room.find({ clientId: id }).populate('shopId')
+    const rooms = await Room.find({ clientId: id }).populate(['shopId', 'checkingId'])
 
     res.json(rooms)
 
@@ -61,8 +61,8 @@ router.get('/list/shopId/:id', async (req, res) => {
         populate: {
             path: 'userId',
             model: 'User'
-        }
-    }])
+        },
+    }, 'checkingId'])
 
     res.json(rooms)
 
