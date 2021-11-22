@@ -69,8 +69,6 @@ router.post('/login', async(req, res) => {
         subject = await Client.findOne({ userId: user._id })
     }else if (user.authId.auth === 'shop'){
         subject = await Shop.findOne({ userId: user._id })
-    }else if (user.authId.auth === 'admin'){
-        subject = user
     }
 
     if (user === null) {
