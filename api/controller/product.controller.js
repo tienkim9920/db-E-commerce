@@ -461,19 +461,31 @@ function upLoadImage(req, res, next) {
     if (!req.files) {
         next()
     } else {
-        req.files.file.forEach((item) => {
-            const fileName = item.name
+        if (Array.isArray(req.files.file))
+            req.files.file.forEach((item) => {
+                const fileName = item.name
 
-            item.mv('./public/image/product/' + fileName)
+                item.mv('./public/image/product/' + fileName)
 
-        });
+            });
+        else {
+            const fileImage = req.files.file;
+
+            const fileName = fileImage.name
+
+            fileImage.mv('./public/image/product/' + fileName)
+        }
 
         next()
     }
 }
 
 async function addProduct(req, res, next) {
-    req.body.image = req.body.fileName ? req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : []
+    const fileName = req.body.fileName || []
+
+
+    Array.isArray(fileName) ? req.body.image = req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : req.body.image = "http://localhost:4000/image/product/" + fileName
+
     req.body.name = req.body.name.toUpperCase()
     const product = await Product.create(req.body)
     req.productId = product._id
@@ -521,13 +533,21 @@ async function updateOption(req, res, next) {
 
 async function updateProduct(req, res) {
     const filename = req.body.fileName || []
-
-    req.body.image = filename.map((item) => {
-        if (!item.startsWith("http://localhost:4000/image/product")) {
-            return "http://localhost:4000/image/product/" + item
+    if (Array.isArray(fileName)) {
+        req.body.image = filename.map((item) => {
+            if (!item.startsWith("http://localhost:4000/image/product")) {
+                return "http://localhost:4000/image/product/" + item
+            }
+            return item
+        })
+    } else {
+        if (!filename.startsWith("http://localhost:4000/image/product")) {
+            req.body.image = "http://localhost:4000/image/product/" + filename
+        } else {
+            req.body.image = filename
         }
-        return item
-    })
+    }
+
     await Product.updateOne({ _id: req.params.id }, req.body)
 
     return res.json({ msg: 'Bạn đã thêm thành công' })

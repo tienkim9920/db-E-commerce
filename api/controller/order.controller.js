@@ -3,7 +3,7 @@ const express = require('express')
 const router = express.Router()
 
 const Order = require('../model/order.model')
-const { route } = require('./address.controller')
+const Notification = require('../model/notification.model')
 
 // GET order all
 router.get('/', async(req, res) => {
@@ -170,7 +170,69 @@ router.post('/', async(req, res) => {
 
 // Update Status order
 
-router.patch('/:id', async(req, res) => {
+router.patch('/:id', updateStatusOrder, postNotification)
+
+
+
+// DELETE order
+router.delete('/:id', async(req, res) => {
+
+    const id = req.params.id
+
+    const order = await Order.deleteOne({ _id: id })
+
+    res.json({
+        msg: "Thanh Cong",
+        order
+    })
+
+})
+
+// GET Statistic
+router.get('/statistic/:shopId', async(req, res) => {
+
+    const { shopId } = req.params
+
+    const { checking, getDay, getMonth, getYear } = req.query
+
+
+    if (parseInt(checking) === 1) {
+
+        const createTime = `${getDay}/${getMonth}/${getYear}`
+
+        const statistic = await Order.find({ createTime, shopId, status: '4' }).populate(['userId', 'payId'])
+
+        res.json(statistic)
+    } else if (parseInt(checking) === 2) {
+
+        const createTime = `/${getMonth}/${getYear}`
+
+        const statistic = await Order.find({
+            "createTime": {
+                $regex: '.*' + createTime + '.*'
+            },
+            shopId,
+            status: '4'
+        }).populate(['userId', 'payId'])
+
+        res.json(statistic)
+    } else {
+        const createTime = `/${getYear}`
+
+        const statistic = await Order.find({
+            "createTime": {
+                $regex: '.*' + createTime + '.*'
+            },
+            shopId,
+            status: '4'
+        }).populate(['userId', 'payId'])
+
+        res.json(statistic)
+    }
+
+})
+
+async function updateStatusOrder(req, res, next) {
     const _id = req.params.id
     const status = req.query.status || "4"
     const option = req.query.option || "true"
@@ -188,10 +250,7 @@ router.patch('/:id', async(req, res) => {
             pay: false
         });
 
-        return res.json({
-            msg: "Transfer status success",
-            order
-        })
+        next();
     }
 
     if (status === "3") {
@@ -200,76 +259,67 @@ router.patch('/:id', async(req, res) => {
             pay: false
         });
 
-        return res.json({
-            msg: "Transfer status success",
-            order
-        })
+        next();
     }
 
     const order = await Order.findByIdAndUpdate(_id, {
         status: Number(status) + 1
     });
 
-    res.json({
-        msg: "Transfer status success",
-        order
-    })
-})
+    next()
+}
 
-// DELETE order
-router.delete('/:id', async(req, res) => {
+async function postNotification(req, res) {
+    console.log(req.query)
+    const status = req.query.status || "4"
+    const userId = req.query.userId || null
+    const option = req.query.option || "true"
+    console.log(userId)
 
-    const id = req.params.id
-
-    const order = await Order.deleteOne({ _id: id })
-
-    res.json({
-        msg: "Thanh Cong",
-        order
-    })
-
-})
-
-// GET Statistic
-router.get('/statistic/:shopId', async (req, res) => {
-
-    const { shopId } = req.params
-
-    const { checking, getDay, getMonth, getYear } = req.query
-
-
-    if (parseInt(checking) === 1){
-
-        const createTime = `${getDay}/${getMonth}/${getYear}`
-
-        const statistic = await Order.find({ createTime, shopId, status: '4' }).populate(['userId', 'payId'])
-
-        res.json(statistic)
-    }else if (parseInt(checking) === 2){
-
-        const createTime = `/${getMonth}/${getYear}`
-
-        const statistic = await Order.find({
-            "createTime": {
-                $regex: '.*' + createTime + '.*'
-            },
-            shopId, status: '4'
-        }).populate(['userId', 'payId'])
-
-        res.json(statistic)
-    }else {
-        const createTime = `/${getYear}`
-
-        const statistic = await Order.find({
-            "createTime": {
-                $regex: '.*' + createTime + '.*'
-            },
-            shopId, status: '4'
-        }).populate(['userId', 'payId'])
-
-        res.json(statistic)
+    if (!userId) {
+        return res.json({
+            msg: "Transfer status success"
+        })
     }
 
-})
+    if (option !== "true") {
+        await Notification.create({
+            userId: userId,
+            description: "Đơn hàng của bạn đã bị hủy"
+        })
+
+        return res.json({
+            msg: "Transfer status success"
+        })
+    }
+
+    switch (req.query.status) {
+        case "1":
+            await Notification.create({
+                userId: userId,
+                description: "Đơn hàng của bạn đã được xác nhận"
+            })
+            break;
+        case "2":
+            await Notification.create({
+                userId: userId,
+                description: "Đơn hàng của bạn đang vận chuyển"
+            })
+            break;
+        case "3":
+            await Notification.create({
+                userId: userId,
+                description: "Đơn hàng của bạn đã hoàn thành"
+            })
+            break;
+        default:
+            break;
+    }
+
+    return res.json({
+        msg: "Transfer status success"
+    })
+
+}
 
 module.exports = router
