@@ -237,20 +237,20 @@ async function updateStatusOrder(req, res, next) {
     const status = req.query.status || "4"
     const option = req.query.option || "true"
 
-    if (status >= 4) {
-        return res.json({
-            msg: "Transfer status success",
-            order
-        })
-    }
-
-    if (option !== "true") {
+    if (option === 'false') {
         const order = await Order.findByIdAndUpdate(_id, {
             status: "5",
             pay: false
         });
 
         next();
+    }
+
+    if (status >= 4) {
+        return res.json({
+            msg: "Transfer status success",
+            order
+        })
     }
 
     if (status === "3") {
