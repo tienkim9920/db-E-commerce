@@ -243,7 +243,7 @@ async function updateStatusOrder(req, res, next) {
             pay: false
         });
 
-        next();
+        return next();
     }
 
     if (status >= 4) {
@@ -259,7 +259,7 @@ async function updateStatusOrder(req, res, next) {
             pay: false
         });
 
-        next();
+        return next();
     }
 
     const order = await Order.findByIdAndUpdate(_id, {
@@ -270,11 +270,9 @@ async function updateStatusOrder(req, res, next) {
 }
 
 async function postNotification(req, res) {
-    console.log(req.query)
     const status = req.query.status || "4"
     const userId = req.query.userId || null
     const option = req.query.option || "true"
-    console.log(userId)
 
     if (!userId) {
         return res.json({
