@@ -143,8 +143,8 @@ router.patch('/update/:id', async(req, res) => {
 
         var fileName = fileImage.name
 
-        // var fileProduct = "https://server-lover.herokuapp.com/" + fileName
-        var fileUser = "http://localhost:4000/" + fileName
+        var fileUser = "https://tk-ecommerce.herokuapp.com/" + fileName
+        // var fileUser = "http://localhost:4000/" + fileName
 
         user.image = fileUser
 

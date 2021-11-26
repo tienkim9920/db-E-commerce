@@ -420,8 +420,8 @@ router.patch('/update/image', async(req, res) => {
         var fileName = fileImage.name
 
         // create path to client get image
-        // var fileProduct = "https://server-lover.herokuapp.com/" + fileName
-        var fileProduct = "http://localhost:4000/" + fileName
+        var fileProduct = "https://tk-ecommerce.herokuapp.com/" + fileName
+        // var fileProduct = "http://localhost:4000/" + fileName
 
         const image = {
             id: Math.random().toString(),
@@ -484,7 +484,9 @@ async function addProduct(req, res, next) {
     const fileName = req.body.fileName || []
 
 
-    Array.isArray(fileName) ? req.body.image = req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : req.body.image = "http://localhost:4000/image/product/" + fileName
+    // Array.isArray(fileName) ? req.body.image = req.body.fileName.map(item => ("http://localhost:4000/image/product/" + item)) : req.body.image = "http://localhost:4000/image/product/" + fileName
+    
+    Array.isArray(fileName) ? req.body.image = req.body.fileName.map(item => ("https://tk-ecommerce.herokuapp.com/image/product/" + item)) : req.body.image = "https://tk-ecommerce.herokuapp.com/image/product/" + fileName
 
     req.body.name = req.body.name.toUpperCase()
     const product = await Product.create(req.body)
@@ -534,16 +536,30 @@ async function updateOption(req, res, next) {
 
 async function updateProduct(req, res) {
     const filename = req.body.fileName || []
+    // if (Array.isArray(filename)) {
+    //     req.body.image = filename.map((item) => {
+    //         if (!item.startsWith("http://localhost:4000/image/product")) {
+    //             return "http://localhost:4000/image/product/" + item
+    //         }
+    //         return item
+    //     })
+    // } else {
+    //     if (!filename.startsWith("http://localhost:4000/image/product")) {
+    //         req.body.image = "http://localhost:4000/image/product/" + filename
+    //     } else {
+    //         req.body.image = filename
+    //     }
+    // }
     if (Array.isArray(filename)) {
         req.body.image = filename.map((item) => {
-            if (!item.startsWith("http://localhost:4000/image/product")) {
-                return "http://localhost:4000/image/product/" + item
+            if (!item.startsWith("https://tk-ecommerce.herokuapp.com/image/product")) {
+                return "https://tk-ecommerce.herokuapp.com/image/product/" + item
             }
             return item
         })
     } else {
-        if (!filename.startsWith("http://localhost:4000/image/product")) {
-            req.body.image = "http://localhost:4000/image/product/" + filename
+        if (!filename.startsWith("https://tk-ecommerce.herokuapp.com/image/product")) {
+            req.body.image = "https://tk-ecommerce.herokuapp.com/image/product/" + filename
         } else {
             req.body.image = filename
         }

@@ -102,7 +102,8 @@ router.patch('/:id', async(req, res) => {
 
         var fileName = fileImage.name
     
-        fileShop = "http://localhost:4000/" + fileName
+        // fileShop = "http://localhost:4000/" + fileName
+        fileShop = "https://tk-ecommerce.herokuapp.com/" + fileName
     
         // move file name in folder public
         fileImage.mv('./public/' + fileName)
@@ -141,8 +142,8 @@ router.patch('/update/image', async(req, res) => {
 
     var fileName = fileImage.name
 
-    // var fileProduct = "https://server-lover.herokuapp.com/" + fileName
-    var fileShop = "http://localhost:4000/" + fileName
+    var fileShop = "https://tk-ecommerce.herokuapp.com/" + fileName
+    // var fileShop = "http://localhost:4000/" + fileName
 
     shop.image = fileShop
 
