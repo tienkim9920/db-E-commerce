@@ -67,10 +67,9 @@ router.post('/login', async(req, res) => {
     // Kiểm tra quyền
     if (user.authId.auth === 'client'){
         subject = await Client.findOne({ userId: user._id })
+        console.log(subject)
     }else if (user.authId.auth === 'shop'){
         subject = await Shop.findOne({ userId: user._id })
-    }else if (user.authId.auth === 'admin'){
-        subject = user
     }
 
     if (user === null) {
